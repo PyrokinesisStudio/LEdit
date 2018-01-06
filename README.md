@@ -1,4 +1,4 @@
-# LEdit <h2>by Shift</h2>
+<h1>LEdit <h2>by Shift</h2><h1>
 <hr />
 
 <h3>All connections aren't through an SSL so they're vulnerable (at least I think thats how it is)</h3>
