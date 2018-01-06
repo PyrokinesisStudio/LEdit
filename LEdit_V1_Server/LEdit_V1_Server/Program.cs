@@ -342,16 +342,13 @@ namespace LEdit_V1_Server
 
         static void Main(string[] args)
         {
-            string ip = "127.0.0.1";
-            int port = 90;
-
-            server = new WebSocketServer(IPAddress.Parse(ip), port, false);
+            server = new WebSocketServer(IPAddress.Parse(Settings.Socket_Config.ip_addr), Settings.Socket_Config.port, false);
 
             server.Start();
             server.AddWebSocketService<LE_Functions>("/LE");
             if (server.IsListening)
             {
-                Console.WriteLine("Listening on  {0}:{1}, and providing path services:", ip, port);
+                Console.WriteLine("Listening on  {0}:{1}, and providing path services:", Settings.Socket_Config.ip_addr, Settings.Socket_Config.port);
                 foreach (var path in server.WebSocketServices.Paths)
                     Console.WriteLine("- {0}", path);
             }
@@ -391,12 +388,6 @@ namespace MySQL
         {
         }
 
-        public string dbHost = "localhost";
-        public string dbName = "my_db_name";
-        public string dbUser = "my_db_username";
-        public string dbPass = "my_db_password";
-        public int dbPort = 3307; // my_db_port
-
         private MySqlConnection connection = null;
         public MySqlConnection Connection
         {
@@ -415,7 +406,7 @@ namespace MySQL
         {
             if (Connection == null)
             {
-                string connstring = string.Format($"Server={dbHost}; port={dbPort}; database={dbName}; UID={dbUser}; password={dbPass}");
+                string connstring = string.Format($"Server={Settings.MySQL_Config.dbHost}; port={Settings.MySQL_Config.dbPort}; database={Settings.MySQL_Config.dbName}; UID={Settings.MySQL_Config.dbUser}; password={Settings.MySQL_Config.dbPass}");
                 connection = new MySqlConnection(connstring);
                 connection.Open();
             }
@@ -427,5 +418,25 @@ namespace MySQL
         {
             connection.Close();
         }
+    }
+}
+
+namespace Settings {
+    // You can edit anything in this namespace appart from the variable names and everything before that on that line
+    // for example for ip_addr it is public static string ip_addr = "127.0.0.1"
+    // you can edit the "127.0.0.1" but nothing else on that line
+    public class Socket_Config
+    {
+        public static string ip_addr = "127.0.0.1"; // The server IP address
+        public static int port = 90; // The server port (please note you might have to add an exception for incoming traffic on Windows Firewall)
+    }
+
+    public class MySQL_Config
+    {
+        public static string dbHost = "localhost";
+        public static string dbName = "my_db_name";
+        public static string dbUser = "my_db_username";
+        public static string dbPass = "my_db_password";
+        public static int dbPort = 3307; // my_db_port - please note that the default is 3306 NOT 3307 so if you're unsure, change it to 3306
     }
 }
