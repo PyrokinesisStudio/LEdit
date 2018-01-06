@@ -1,0 +1,17 @@
+c:\users\anujb\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\LEdit_V1_Server.exe.config
+c:\users\anujb\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\LEdit_V1_Server.exe
+c:\users\anujb\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\LEdit_V1_Server.pdb
+c:\users\anujb\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.csprojResolveAssemblyReference.cache
+c:\users\anujb\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.exe
+c:\users\anujb\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.pdb
+C:\Users\AnujB\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\websocket-sharp.dll
+C:\Users\AnujB\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\websocket-sharp.xml
+C:\Users\AnujB\Documents\Visual Studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\LEdit_V1_Server.exe.manifest
+C:\Users\AnujB\Documents\Visual Studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\LEdit_V1_Server.application
+C:\Users\AnujB\Documents\Visual Studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.exe.manifest
+C:\Users\AnujB\Documents\Visual Studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.application
+C:\Users\AnujB\Documents\Visual Studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\MySql.Data.dll
+C:\Users\AnujB\Documents\Visual Studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\MySql.Data.xml
+C:\Users\AnujB\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\CryptSharp.dll
+C:\Users\AnujB\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\CryptSharp.pdb
+C:\Users\AnujB\documents\visual studio 2017\Projects\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\CryptSharp.xml
