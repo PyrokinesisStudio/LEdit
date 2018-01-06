@@ -1,7 +1,6 @@
 <h1>LEdit<h1>
 
 <hr />
-
 <h3>All connections aren't through an SSL so they're vulnerable (at least I think thats how it is)</h3>
 <h3>...So I wouldn't recommend using this until I take this text out of the README</h3>
 <hr />
