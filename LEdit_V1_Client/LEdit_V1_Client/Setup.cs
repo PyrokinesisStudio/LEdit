@@ -91,7 +91,7 @@ namespace Setup
 
         public static void RequestFileData()
         {
-            DataToRunThrough = files.Count() - 1;
+            DataToRunThrough = files.Count();
             DataRanThrough = 0;
 
             Misc.Global.connectionSocket.Send($"RequestFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {files[DataRanThrough]}");

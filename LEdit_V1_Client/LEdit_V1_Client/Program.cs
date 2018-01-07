@@ -121,7 +121,13 @@ namespace Misc
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine("Thank you!");
 
+            Console.WriteLine("\nStarting the automatic file action scanning thread");
+            // START THREAD HERE
+            Thread autoFileActionThread = new Thread(new ThreadStart(ActionRunner.ScanRunner.ChangeScanner));
+            autoFileActionThread.Start();
+            Console.WriteLine("Started");
             Console.ForegroundColor = ConsoleColor.Green;
+
         }
     }
 }

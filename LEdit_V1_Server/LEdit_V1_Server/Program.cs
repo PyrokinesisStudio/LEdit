@@ -433,10 +433,10 @@ namespace Settings {
 
     public class MySQL_Config
     {
-        public static string dbHost = "localhost";
-        public static string dbName = "my_db_name";
-        public static string dbUser = "my_db_username";
-        public static string dbPass = "my_db_password";
+        public static string dbHost = "b-01.shiftdev.co.uk";
+        public static string dbName = "shiftdev_codetrack";
+        public static string dbUser = "leu";
+        public static string dbPass = "IoSHAaQyG6ZM";
         public static int dbPort = 3307; // my_db_port - please note that the default is 3306 NOT 3307 so if you're unsure, change it to 3306
     }
 }

@@ -19,19 +19,26 @@ namespace ActionRunner
         public static List<IndexedFiles> indexedFileList = new List<IndexedFiles>();
         public static List<String> indexedDirectoriesList = new List<String>();
 
+        public static byte[] CheckFileHash(string fileToCheck)
+        {
+            using (Stream stream = File.Open(fileToCheck, FileMode.Open))
+            {
+                SHA1 sha = new SHA1CryptoServiceProvider();
+                return sha.ComputeHash(stream);
+            }
+        }
+
         public static void IndexFiles(string f)
         {
             foreach (string file in Directory.GetFiles(f))
             {
-                using (var stream = File.OpenRead(file))
-                {
-                    SHA1 sha = new SHA1CryptoServiceProvider();
                     indexedFileList.Add(new IndexedFiles
                     {
                         path = file,
-                        hash = sha.ComputeHash(stream)
+                        hash = CheckFileHash(file)
                     });
-                }
+                    //Console.WriteLine("File: " + file);
+                    //Console.WriteLine(BitConverter.ToString(CheckFileHash(file)));
             }
             foreach (string sdir in Directory.GetDirectories(f))
             {
@@ -50,49 +57,132 @@ namespace ActionRunner
 
     public class ScanRunner
     {
+        public static void ChangeScanner()
+        {
+            while (filesToDelete.Count == 0 && foldersToDelete.Count == 0 && newFiles.Count == 0 && editedFiles.Count == 0 && newFolders.Count == 0)
+            {
+                CheckForNewFilesFolders(Misc.Config.fullProjectPath);
+
+                CheckFileFolderDelete(Misc.Config.fullProjectPath);
+                System.Threading.Thread.Sleep(150);
+            }
+
+            Console.WriteLine("Change Detected");
+
+            // Just saying, the order of this is vital to its functionality
+            // Due to the way the renaming works
+
+            if (newFiles.Count > 0)
+            {
+                foreach (string file in newFiles)
+                {
+                    Console.WriteLine("Detected new file: " + file);
+                    Misc.Global.connectionSocket.Send("MY MESSAGE TO CREATE FILES");
+                }
+                newFiles.Clear();
+            }
+
+            if (editedFiles.Count > 0)
+            {
+                foreach (string file in editedFiles)
+                {
+                    Console.WriteLine("Detected modified file: " + file);
+                    Misc.Global.connectionSocket.Send("MY MESSAGE TO UPDATE FILES");
+                }
+                editedFiles.Clear();
+            }
+
+            if (newFolders.Count > 0)
+            {
+                foreach (string folder in newFolders)
+                {
+                    Console.WriteLine("Detected new folder: " + folder);
+                    Misc.Global.connectionSocket.Send("MY MESSAGE TO CREATE NEW FOLDERS");
+                }
+                newFolders.Clear();
+            }
+
+            if (filesToDelete.Count > 0)
+            {
+                foreach (string file in filesToDelete)
+                {
+                    Console.WriteLine("Detected deleted file: " + file);
+                    Misc.Global.connectionSocket.Send("MY MESSAGE TO DELETE FILES");
+                }
+                filesToDelete.Clear();
+            }
+
+            if (foldersToDelete.Count > 0)
+            {
+                foreach (string folder in foldersToDelete)
+                {
+                    Console.WriteLine("Detected deleted folder: " + folder);
+                    Misc.Global.connectionSocket.Send("MY MESSAGE TO DELETE FOLDERS");
+                }
+                foldersToDelete.Clear();
+            }
+
+            newFileIndex.Clear();
+            newFolderIndex.Clear();
+            Index.indexedFileList.Clear();
+            Index.indexedDirectoriesList.Clear();
+            Index.IndexFiles(Misc.Config.fullProjectPath);
+
+            ChangeScanner();
+        }
+
+        public static List<String> filesToDelete = new List<String>();
+        public static List<String> foldersToDelete = new List<String>();
+
         public static List<String> newFiles = new List<String>();
         public static List<String> newFolders = new List<String>();
 
         public static List<String> editedFiles = new List<String>();
 
-        public static void CheckForNewHash(string f) 
+        public static List<String> newFileIndex = new List<String>();
+        public static List<String> newFolderIndex = new List<String>();
+
+        // CAN ONLY BE RAN AFTER INITIAL INDEX
+        public static void CheckForNewFilesFolders(string f) 
         {
             foreach (string file in Directory.GetFiles(f)) // Checks the files
             {
-                SHA1 sha = new SHA1CryptoServiceProvider();
-                bool fileExists = false;
+                newFileIndex.Add(file); // Add to the new file index
+                bool fileExists = false; 
                 bool fileEdited = false;
 
-                // goes through every indexed file in the indexed file list and checks it against the current file above
+                // Goes through every indexed file in the indexed file list and checks it against the current file above
                 foreach (IndexedFiles indexedFile in Index.indexedFileList)
                 {
                     if (file == indexedFile.path)
                     {
                         // The file exists
                         fileExists = true;
-                        // Opens a file stream
-                        using (var stream = File.OpenRead(file))
+                        if (BitConverter.ToString(Index.CheckFileHash(file)) == BitConverter.ToString(indexedFile.hash))
                         {
-                            if (sha.ComputeHash(stream) != indexedFile.hash)
-                            {
-                                // The file has been edited
-                                fileEdited = true;
-                            }
+
+                        } else
+                        {
+                            //Console.WriteLine(BitConverter.ToString(Index.CheckFileHash(file)));
+                            //Console.WriteLine(BitConverter.ToString(indexedFile.hash));
+                            // The file has been edited
+                            fileEdited = true;
                         }
                     }
+                }
 
-                    // Adds the appropriate items to the lists declared above
-                    if (fileExists == false)
-                    {
-                        newFiles.Add(file);
-                    } else if (fileEdited == true)
-                    {
-                        editedFiles.Add(file);
-                    }
+                // Adds the appropriate items to the lists declared above
+                if (!fileExists)
+                {
+                    newFiles.Add(file);
+                } else if (fileEdited == true)
+                {
+                    editedFiles.Add(file);
                 }
             }
             foreach (string sdir in Directory.GetDirectories(f)) // Checks the directories
             {
+                newFolderIndex.Add(sdir);
                 try
                 {
                     bool directoryExists = false; 
@@ -111,13 +201,53 @@ namespace ActionRunner
                         newFolders.Add(sdir);
                     }
 
-                    CheckForNewHash(sdir);
+                    CheckForNewFilesFolders(sdir);
                 }
                 catch
                 {
                     // Do Nothing
                 }
             }
+        }
+
+        // CAN ONLY BE RAN AFTER CheckForNewFilesFolders
+        public static void CheckFileFolderDelete(string f)
+        {
+            foreach (IndexedFiles oldFile in Index.indexedFileList)
+            {
+                bool fileFound = false;
+                foreach (string file in newFileIndex)
+                {
+                    if (oldFile.path == file)
+                    {
+                        fileFound = true;
+                    }
+                }
+
+                if (!fileFound)
+                {
+                    Console.WriteLine("Found file to delete");
+                    filesToDelete.Add(oldFile.path);
+                }
+            }
+            newFileIndex.Clear(); // Clear the index for it to be repopulated
+
+            foreach (string oldDir in Index.indexedDirectoriesList)
+            {
+                bool dirFound = false;
+                foreach (string newDir in newFolderIndex)
+                {
+                    if (oldDir == newDir) {
+                        dirFound = true;
+                    }
+                }
+
+                if (!dirFound)
+                {
+                    foldersToDelete.Add(oldDir);
+                }
+            }
+            newFolderIndex.Clear(); // Clear the index for it to be repopulated
         }
     }
 }
