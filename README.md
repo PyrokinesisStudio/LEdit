@@ -1,8 +1,9 @@
-# LEdit <h2>by Shift</h2>
-<hr />
+<h1>LEdit<h1>
 
+<hr />
 <h3>All connections aren't through an SSL so they're vulnerable (at least I think thats how it is)</h3>
 <h3>...So I wouldn't recommend using this until I take this text out of the README</h3>
+<hr />
 
 <h3>What is LEdit?</h3>
 LEdit is a piece of software, which allows teams to live share their code to other members and also just edit it normally, so what will happen is that you will configure your team directory on the server application and everything in that directory will be shared to your other members (who you have to create an account for)
