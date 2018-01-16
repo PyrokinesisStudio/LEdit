@@ -21,6 +21,8 @@ namespace LEdit_V1_Client
             Misc.Global.connectionSocket = new WebSocket($"ws://{Misc.Config.ip}:{Misc.Config.port}/LE");
             Misc.Global.connectionSocket.Connect();
 
+            Handler.MessageHandler.AppListener(L.Change.ChangeListener);
+
             while (true)
             {
                 string msg = Console.ReadLine();

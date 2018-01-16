@@ -24,6 +24,7 @@ namespace LEdit_V1_Server
         {
             String[] dataParams = e.Data.Split(Convert.ToChar(" "));
             string data;
+            string status;
 
             switch (dataParams[0])
             {
@@ -41,30 +42,38 @@ namespace LEdit_V1_Server
                 case "RequestFileIndex":
                     Send(ActionRunner.RunFileIndexSender(dataParams));
                     break;
-
                 case "RequestDirectoryIndex":
                     Send(ActionRunner.RunFolderIndexSender(dataParams));
                     break;
                 case "RequestFileData":
                     Send(ActionRunner.RunFileDataSender(dataParams));
-                    Console.WriteLine("Sent Data Over");
                     break;
                 case "UploadFileData":
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
-                    Send(ActionRunner.RunFileUpdate(dataParams, dataParams[3], data));
+                    status = ActionRunner.RunFileUpdate(dataParams, dataParams[3], data);
+                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"RefreshFile {dataParams[3]} {data}");
+                    Send(status);
                     break;
                 case "CreateNewFile":
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
-                    Send(ActionRunner.RunFileUpload(dataParams, dataParams[3], data));
+                    status = ActionRunner.RunFileUpload(dataParams, dataParams[3], data);
+                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"CreateFile {dataParams[3]}");
+                    Send(status);
                     break;
                 case "DeleteFile":
-                    Send(ActionRunner.RunFileDeleter(dataParams));
+                    status = ActionRunner.RunFileDeleter(dataParams);
+                    Send(status);
+                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"DeleteFile {dataParams[3]}");
                     break;
                 case "CreateNewFolder":
-                    Send(ActionRunner.RunFolderCreator(dataParams));
+                    status = ActionRunner.RunFileDeleter(dataParams);
+                    Send(status);
+                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"CreateFolder {dataParams[3]}");
                     break;
                 case "DeleteFolder":
-                    Send(ActionRunner.RunFolderDeleter(dataParams));
+                    status = ActionRunner.RunFileDeleter(dataParams);
+                    Send(status);
+                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"DeleteFolder {dataParams[3]}");
                     break;
             }
         }
@@ -283,42 +292,6 @@ namespace LEdit_V1_Server
                 return "Bad Login";
             }
         }
-
-        /*       internal static string FetchFileData(string fileName)
-               {
-                   var dbCon = MySQL.DBConnection.Instance();
-                   string data = "";
-
-                   if (dbCon.Connected())
-                   {
-                       if (dbCon.Connection.State != ConnectionState.Open)
-                       {
-                           dbCon.Connection.Open();
-                       }
-
-                       MySqlCommand q = new MySqlCommand()
-                       {
-                           Connection = dbCon.Connection,
-                           CommandText = "SELECT * FROM files WHERE file=@fileName"
-                       };
-                       q.Parameters.AddWithValue("@fileName", fileName);
-                       q.Prepare();
-
-                       MySqlDataReader reader = q.ExecuteReader();
-
-
-                       while (reader.Read())
-                       {
-                           data = reader.GetString(2);
-                       }
-
-                       reader.Close();
-                       dbCon.Close();
-                   }
-
-                   return data;
-               }
-           */
     }
 
 
@@ -347,9 +320,7 @@ namespace LEdit_V1_Server
     }
 
     public class Program
-    {
-        public static WebSocketServer server;
-
+    {          
         static void Main(string[] args)
         {
             WebClient dataRetriever = new WebClient();
@@ -367,21 +338,20 @@ namespace LEdit_V1_Server
                 Server_Variables.Userdata.UserData[i, 1] = passwords[i];
             }
 
-            server = new WebSocketServer(IPAddress.Parse(Settings.Socket_Config.ip_addr), Settings.Socket_Config.port, false);
+            Server_Variables.Sockets.server = new WebSocketServer(IPAddress.Parse(Settings.Socket_Config.ip_addr), Settings.Socket_Config.port, false);
 
-            server.Start();
-            server.AddWebSocketService<LE_Functions>("/LE");
-            if (server.IsListening)
+            Server_Variables.Sockets.server.Start();
+            Server_Variables.Sockets.server.AddWebSocketService<LE_Functions>("/LE");
+            if (Server_Variables.Sockets.server.IsListening)
             {
                 Console.WriteLine("Listening on  {0}:{1}, and providing path services:", Settings.Socket_Config.ip_addr, Settings.Socket_Config.port);
-                foreach (var path in server.WebSocketServices.Paths)
+                foreach (var path in Server_Variables.Sockets.server.WebSocketServices.Paths)
                     Console.WriteLine("- {0}", path);
             }
-
             Console.WriteLine("\nPress Enter to stop the server...");
             Console.ReadLine();
 
-            server.Stop();
+            Server_Variables.Sockets.server.Stop();
 
             Console.ReadKey();
         }
@@ -447,10 +417,16 @@ namespace MySQL
 }
 */
 
-namespace Server_Variables{
+namespace Server_Variables
+{
     public class Userdata
     {
         public static String[,] UserData { get; set; }
+    }
+
+    public class Sockets
+    {
+        public static WebSocketServer server;
     }
 }
 

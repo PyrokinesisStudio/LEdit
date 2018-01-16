@@ -142,6 +142,8 @@ namespace Setup
             for (int key = 0; key < files.Count(); key++)
             {
                 string progress = key + "/" + DataToRunThrough;
+                FileMgmt.Manager.UpdateFile($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);
+
                 try
                 {
                     File.WriteAllText($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);

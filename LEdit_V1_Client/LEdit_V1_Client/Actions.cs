@@ -139,7 +139,6 @@ namespace ActionRunner
                     Console.WriteLine("Detected new folder: " + folder);
                     Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
                     Handler.MessageHandler.AppListener(UploadListener);
-                    // TO DO
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
                     {
                         if (e.Data == "True")
@@ -255,8 +254,6 @@ namespace ActionRunner
 
                         } else
                         {
-                            //Console.WriteLine(BitConverter.ToString(Index.CheckFileHash(file)));
-                            //Console.WriteLine(BitConverter.ToString(indexedFile.hash));
                             // The file has been edited
                             fileEdited = true;
                         }
