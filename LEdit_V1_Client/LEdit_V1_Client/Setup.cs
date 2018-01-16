@@ -142,7 +142,14 @@ namespace Setup
             for (int key = 0; key < files.Count(); key++)
             {
                 string progress = key + "/" + DataToRunThrough;
-                File.WriteAllText($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);
+                try
+                {
+                    File.WriteAllText($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);
+                } catch (System.IO.IOException)
+                {
+                    Thread.Sleep(100);
+                    PopulateFiles(fileNames, fileData);
+                }
                 Console.WriteLine($"Loading (x/y): {progress}");
                 key++;
             }

@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Server.exe" size="12256">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Server.exe" size="13280">
       <assemblyIdentity name="LEdit_V1_Server" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>3rwaDMbcdddM1nygJKMIsPNC4yeaxk6PFoIaWu+QZG8=</dsig:DigestValue>
+        <dsig:DigestValue>hInCpRZXN6PkPBWi31pByr6i0sLPxEos8Xq7t8QsgN8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

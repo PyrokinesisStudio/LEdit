@@ -14,6 +14,7 @@ using MySql.Data.MySqlClient;
 using CryptSharp;
 using System.Threading;
 using System.Data;
+using System.Collections.Specialized;
 
 namespace LEdit_V1_Server
 {
@@ -22,6 +23,7 @@ namespace LEdit_V1_Server
         protected override void OnMessage(MessageEventArgs e)
         {
             String[] dataParams = e.Data.Split(Convert.ToChar(" "));
+            string data;
 
             switch (dataParams[0])
             {
@@ -48,10 +50,21 @@ namespace LEdit_V1_Server
                     Console.WriteLine("Sent Data Over");
                     break;
                 case "UploadFileData":
-                    Send(ActionRunner.RunFileUpload(dataParams[1], e.Data.Substring(15 + dataParams[1].Length)));
-                    Console.WriteLine("Received data");
-                    Console.WriteLine(dataParams[1]);
-                    Console.WriteLine(e.Data.Substring(16 + dataParams[1].Length));
+                    data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
+                    Send(ActionRunner.RunFileUpdate(dataParams, dataParams[3], data));
+                    break;
+                case "CreateNewFile":
+                    data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
+                    Send(ActionRunner.RunFileUpload(dataParams, dataParams[3], data));
+                    break;
+                case "DeleteFile":
+                    Send(ActionRunner.RunFileDeleter(dataParams));
+                    break;
+                case "CreateNewFolder":
+                    Send(ActionRunner.RunFolderCreator(dataParams));
+                    break;
+                case "DeleteFolder":
+                    Send(ActionRunner.RunFolderDeleter(dataParams));
                     break;
             }
         }
@@ -59,7 +72,7 @@ namespace LEdit_V1_Server
         protected override void OnOpen()
         {
             Console.WriteLine("A Client has Connected");
-            //Send("Connected to LE_Server V1");   
+            Send("Connected to LE_Server V1");   
         }
 
         protected override void OnClose(CloseEventArgs e)
@@ -117,15 +130,9 @@ namespace LEdit_V1_Server
 
             if (Auth.Login(username, password))
             {
-                List<String> fileIndex = FetchData.FetchFileIndex();
-                string fileIndexTogether = "";
-
-                foreach (string file in fileIndex)
-                {
-                    fileIndexTogether += file;
-                }
-
-                return (fileIndexTogether);
+                WebClient dataRetriever = new WebClient();
+                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestIndex&type=files");
+                return (data);
             }
             else
             {
@@ -140,14 +147,9 @@ namespace LEdit_V1_Server
 
             if (Auth.Login(username, password))
             {
-                List<String> folderIndex = FetchData.FetchDirectoryIndex();
-                string folderIndexTogether = "";
-
-                foreach (string folder in folderIndex)
-                {
-                    folderIndexTogether += folder;
-                }
-                return (folderIndexTogether);
+                WebClient dataRetriever = new WebClient();
+                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestIndex&type=folders");
+                return (data);
             }
             else
             {
@@ -162,9 +164,9 @@ namespace LEdit_V1_Server
 
             if (Auth.Login(username, password))
             {
-                string folderIndex = FetchData.FetchFileData(dataParams[3]);
-
-                return (folderIndex);
+                WebClient dataRetriever = new WebClient();
+                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestFileData&file={dataParams[3]}");
+                return (data);
             }
             else
             {
@@ -172,167 +174,175 @@ namespace LEdit_V1_Server
             }
         }
 
-        public static string RunFileUpload(string fileName, string fileData)
+        public static string RunFolderCreator(String[] dataParams)
         {
-                String[] where = new String[2];
-                where[0] = "file";
-                where[1] = fileName;
-                SendData.UpdateData("files", "data", fileData, where);
-            return "True";
+            string username = dataParams[1];
+            string password = dataParams[2];
+            string path = dataParams[3];
+
+            if (Auth.Login(username, password))
+            {
+                WebClient dataRetriever = new WebClient();
+                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=CreateFolder&folder={dataParams[3]}&username={username}");
+                return (data);
+            }
+            else
+            {
+                return "False";
+            }
         }
+
+        public static string RunFolderDeleter(String[] dataParams)
+        {
+            string username = dataParams[1];
+            string password = dataParams[2];
+
+            if (Auth.Login(username, password))
+            {
+                WebClient dataRetriever = new WebClient();
+                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=DeleteFolder&folder={dataParams[3]}&username={username}");
+                return (data);
+            }
+            else
+            {
+                return "False";
+            }
+        }
+
+        public static string RunFileDeleter(String[] dataParams)
+        {
+            string username = dataParams[1];
+            string password = dataParams[2];
+
+            if (Auth.Login(username, password))
+            {
+                WebClient dataRetriever = new WebClient();
+                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=DeleteFile&file={dataParams[3]}&username={username}");
+                return (data);
+            }
+            else
+            {
+                return "False";
+            }
+        }
+
+        public static string RunFileUpload(String[] dataParams, string fileName, string fileData)
+        {
+            string username = dataParams[1];
+            string password = dataParams[2];
+            if (Auth.Login(username, password))
+            {
+                WebClient dataRetriever = new WebClient();
+                byte[] response =
+                dataRetriever.UploadValues($"http://sv-01.shiftdev.co.uk/api/api.php?action=CreateFile&file={fileName}&username={username}", new NameValueCollection()
+                {
+                        { "data", System.Uri.EscapeDataString(fileData) }
+                });
+
+                string result = System.Text.Encoding.UTF8.GetString(response);
+                if (result == "True")
+                {
+                    return "True";
+                }
+                else
+                {
+                    return result;
+                }
+            }
+            else
+            {
+                return "Bad Login";
+            }
+        }
+
+        public static string RunFileUpdate(String[] dataParams, string fileName, string fileData)
+        {
+            string username = dataParams[1];
+            string password = dataParams[2];
+            if (Auth.Login(username, password))
+            {
+                WebClient dataRetriever = new WebClient();
+                byte[] response =
+                dataRetriever.UploadValues($"http://sv-01.shiftdev.co.uk/api/api.php?action=UploadFileData&file={fileName}&username={username}", new NameValueCollection()
+                {
+                        { "data", System.Uri.EscapeDataString(fileData) }
+                });
+
+                string result = System.Text.Encoding.UTF8.GetString(response);
+                if (result == "True")
+                {
+                    return "True";
+                }
+                else
+                {
+                    return result;
+                }
+            }
+            else
+            {
+                return "Bad Login";
+            }
+        }
+
+        /*       internal static string FetchFileData(string fileName)
+               {
+                   var dbCon = MySQL.DBConnection.Instance();
+                   string data = "";
+
+                   if (dbCon.Connected())
+                   {
+                       if (dbCon.Connection.State != ConnectionState.Open)
+                       {
+                           dbCon.Connection.Open();
+                       }
+
+                       MySqlCommand q = new MySqlCommand()
+                       {
+                           Connection = dbCon.Connection,
+                           CommandText = "SELECT * FROM files WHERE file=@fileName"
+                       };
+                       q.Parameters.AddWithValue("@fileName", fileName);
+                       q.Prepare();
+
+                       MySqlDataReader reader = q.ExecuteReader();
+
+
+                       while (reader.Read())
+                       {
+                           data = reader.GetString(2);
+                       }
+
+                       reader.Close();
+                       dbCon.Close();
+                   }
+
+                   return data;
+               }
+           */
     }
+
 
     public class Auth
     {
         public static bool Login(string username, string password)
         {
-            var dbCon = MySQL.DBConnection.Instance();
-
-            if (dbCon.Connected())
+            username = username.ToUpper();
+            String[,] storedUserData = Server_Variables.Userdata.UserData; // I'm very lazy :3 - Soy muy perezoso :3
+            
+            for (int i = 0; i < storedUserData.Length; i++)
             {
-                string q = "SELECT * FROM users";
-
-                MySqlDataReader reader = MySQL.Data.GetData(q, dbCon.Connection);
-
-                while (reader.Read())
+                if (storedUserData[i, 0] == username)
                 {
-                    if (reader.GetString(1) == username.ToUpper())
+                    if (Crypter.CheckPassword(password, storedUserData[i, 1]))
                     {
-                        string storedPass = reader.GetString(2);
-                        if (Crypter.CheckPassword(password, storedPass))
-                        {
-                            Console.WriteLine("User Auth: Success");
-                            reader.Close();
-                            return true;
-                        }
-                        else
-                        {
-                            Console.WriteLine("User Auth: Failure");
-                            reader.Close();
-                            return false;
-                        }
+                        return true;
+                    } else
+                    {
+                        return false;
                     }
                 }
-                
-                reader.Close();
-                dbCon.Close();
             }
             return false;
-        }
-    }
-
-    public class SendData
-    {
-        internal static void UpdateData(string table, string col, string data, String[] where)
-        {
-
-            var dbCon = MySQL.DBConnection.Instance();
-
-            if (dbCon.Connected())
-            {
-                if (dbCon.Connection.State != ConnectionState.Open)
-                {
-                    dbCon.Connection.Open();
-                }
-
-                MySqlCommand q = new MySqlCommand()
-                {
-                    Connection = dbCon.Connection,
-                    CommandText = $"UPDATE {table} SET {col}=@data WHERE {where[0]}=@where2"
-            };
-                q.Parameters.AddWithValue("@data", data);
-                q.Parameters.AddWithValue("@where2", where[1]);
-                q.Prepare();
-
-                q.ExecuteNonQuery();
-
-                dbCon.Close();
-            }
-
-        }
-    }
-
-    public class FetchData
-    {
-        internal static List<String> FetchDirectoryIndex()
-        {
-            List<String> dirIndex = new List<string>();
-
-            var dbCon = MySQL.DBConnection.Instance();
-
-            if (dbCon.Connected())
-            {
-                string q = "SELECT * FROM directories";
-                MySqlDataReader reader = MySQL.Data.GetData(q, dbCon.Connection);
-
-                while (reader.Read())
-                {
-                    dirIndex.Add(reader.GetString(1) + " ");
-                }
-
-                reader.Close();
-                dbCon.Close();
-            }
-
-            return dirIndex;
-        }
-
-        internal static List<String> FetchFileIndex()
-        {
-            List<String> fileIndex = new List<string>();
-
-            var dbCon = MySQL.DBConnection.Instance();
-
-            if (dbCon.Connected())
-            {
-                string q = "SELECT * FROM files";
-                MySqlDataReader reader = MySQL.Data.GetData(q, dbCon.Connection);
-
-                while (reader.Read())
-                {
-                    fileIndex.Add(reader.GetString(1) + " ");   
-                }
-
-                reader.Close();
-                dbCon.Close();
-            }
-
-            return fileIndex;
-        }
-
-        internal static string FetchFileData(string fileName)
-        {
-            var dbCon = MySQL.DBConnection.Instance();
-            string data = "";
-
-            if (dbCon.Connected())
-            {
-                if (dbCon.Connection.State != ConnectionState.Open)
-                {
-                    dbCon.Connection.Open();
-                }
-
-                MySqlCommand q = new MySqlCommand()
-                {
-                    Connection = dbCon.Connection,
-                    CommandText = "SELECT * FROM files WHERE file=@fileName"
-                };
-                q.Parameters.AddWithValue("@fileName", fileName);
-                q.Prepare();
-
-                MySqlDataReader reader = q.ExecuteReader();
-
-
-                while (reader.Read())
-                {
-                    data = reader.GetString(2);
-                }
-
-                reader.Close();
-                dbCon.Close();
-            }
-
-            return data;
         }
     }
 
@@ -342,6 +352,21 @@ namespace LEdit_V1_Server
 
         static void Main(string[] args)
         {
+            WebClient dataRetriever = new WebClient();
+            string usernames_data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestUserData&request=username");
+            string[] usernames = usernames_data.Split(' ');
+
+            string passwords_data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestUserData&request=password");
+            string[] passwords = passwords_data.Split(' ');
+
+            Server_Variables.Userdata.UserData = new String[usernames.Length, 2];
+
+            for (int i = 0; i < usernames.Length; i++)
+            {
+                Server_Variables.Userdata.UserData[i, 0] = usernames[i];
+                Server_Variables.Userdata.UserData[i, 1] = passwords[i];
+            }
+
             server = new WebSocketServer(IPAddress.Parse(Settings.Socket_Config.ip_addr), Settings.Socket_Config.port, false);
 
             server.Start();
@@ -363,7 +388,7 @@ namespace LEdit_V1_Server
 
     }
 }
-
+/*
 namespace MySQL
 {
     public class Data
@@ -375,7 +400,7 @@ namespace MySQL
             {
                 conn.Open();
             }
-
+            
             MySqlDataReader data = command.ExecuteReader();
 
             return data;
@@ -420,6 +445,14 @@ namespace MySQL
         }
     }
 }
+*/
+
+namespace Server_Variables{
+    public class Userdata
+    {
+        public static String[,] UserData { get; set; }
+    }
+}
 
 namespace Settings {
     // You can edit anything in this namespace appart from the variable names and everything before that on that line
@@ -429,14 +462,5 @@ namespace Settings {
     {
         public static string ip_addr = "127.0.0.1"; // The server IP address
         public static int port = 90; // The server port (please note you might have to add an exception for incoming traffic on Windows Firewall)
-    }
-
-    public class MySQL_Config
-    {
-        public static string dbHost = "b-01.shiftdev.co.uk";
-        public static string dbName = "shiftdev_codetrack";
-        public static string dbUser = "leu";
-        public static string dbPass = "IoSHAaQyG6ZM";
-        public static int dbPort = 3307; // my_db_port - please note that the default is 3306 NOT 3307 so if you're unsure, change it to 3306
     }
 }

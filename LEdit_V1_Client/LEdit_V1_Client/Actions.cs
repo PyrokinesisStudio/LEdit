@@ -76,8 +76,27 @@ namespace ActionRunner
             {
                 foreach (string file in newFiles)
                 {
+                    string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                    uploadPath.Replace(" ", "_");
+
                     Console.WriteLine("Detected new file: " + file);
-                    Misc.Global.connectionSocket.Send("MY MESSAGE TO CREATE FILES");
+                    Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {File.ReadAllText(file)}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
+                    {
+                        if (e.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + e.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
                 }
                 newFiles.Clear();
             }
@@ -86,8 +105,27 @@ namespace ActionRunner
             {
                 foreach (string file in editedFiles)
                 {
+                    string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                    uploadPath.Replace(" ", "_");
+
                     Console.WriteLine("Detected modified file: " + file);
-                    Misc.Global.connectionSocket.Send("MY MESSAGE TO UPDATE FILES");
+                    Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {File.ReadAllText(file)}");
+
+                    Handler.MessageHandler.AppListener(UploadListener);
+
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
+                    {
+                        if (e.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        } else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + e.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
                 }
                 editedFiles.Clear();
             }
@@ -96,8 +134,26 @@ namespace ActionRunner
             {
                 foreach (string folder in newFolders)
                 {
+                    string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                    uploadPath.Replace(" ", "_");
                     Console.WriteLine("Detected new folder: " + folder);
-                    Misc.Global.connectionSocket.Send("MY MESSAGE TO CREATE NEW FOLDERS");
+                    Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+                    // TO DO
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
+                    {
+                        if (e.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + e.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
                 }
                 newFolders.Clear();
             }
@@ -106,8 +162,26 @@ namespace ActionRunner
             {
                 foreach (string file in filesToDelete)
                 {
+                    string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                    uploadPath.Replace(" ", "_");
                     Console.WriteLine("Detected deleted file: " + file);
-                    Misc.Global.connectionSocket.Send("MY MESSAGE TO DELETE FILES");
+                    Misc.Global.connectionSocket.Send($"DeleteFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
+                    {
+                        if (e.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + e.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
                 }
                 filesToDelete.Clear();
             }
@@ -116,8 +190,26 @@ namespace ActionRunner
             {
                 foreach (string folder in foldersToDelete)
                 {
+                    string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                    uploadPath.Replace(" ", "_");
                     Console.WriteLine("Detected deleted folder: " + folder);
-                    Misc.Global.connectionSocket.Send("MY MESSAGE TO DELETE FOLDERS");
+                    Misc.Global.connectionSocket.Send($"DeleteFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
+                    {
+                        if (e.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + e.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
                 }
                 foldersToDelete.Clear();
             }
