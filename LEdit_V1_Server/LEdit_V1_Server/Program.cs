@@ -51,14 +51,14 @@ namespace LEdit_V1_Server
                 case "UploadFileData":
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
                     status = ActionRunner.RunFileUpdate(dataParams, dataParams[3], data);
-                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"RefreshFile {dataParams[3]} {data}");
                     Send(status);
+                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"RefreshFile {dataParams[3]} {data}");
                     break;
                 case "CreateNewFile":
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
                     status = ActionRunner.RunFileUpload(dataParams, dataParams[3], data);
-                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"CreateFile {dataParams[3]}");
                     Send(status);
+                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"CreateFile {dataParams[3]}");
                     break;
                 case "DeleteFile":
                     status = ActionRunner.RunFileDeleter(dataParams);
@@ -358,64 +358,6 @@ namespace LEdit_V1_Server
 
     }
 }
-/*
-namespace MySQL
-{
-    public class Data
-    {
-        public static MySqlDataReader GetData(string query, MySqlConnection conn)
-        {
-            MySqlCommand command = new MySqlCommand(query, conn);
-            if (conn.State != ConnectionState.Open)
-            {
-                conn.Open();
-            }
-            
-            MySqlDataReader data = command.ExecuteReader();
-
-            return data;
-        }
-    }
-
-    public class DBConnection
-    {
-        private DBConnection()
-        {
-        }
-
-        private MySqlConnection connection = null;
-        public MySqlConnection Connection
-        {
-            get { return connection; }
-        }
-
-        private static DBConnection _instance = null;
-        public static DBConnection Instance()
-        {
-            if (_instance == null)
-                _instance = new DBConnection();
-            return _instance;
-        }
-
-        public bool Connected()
-        {
-            if (Connection == null)
-            {
-                string connstring = string.Format($"Server={Settings.MySQL_Config.dbHost}; port={Settings.MySQL_Config.dbPort}; database={Settings.MySQL_Config.dbName}; UID={Settings.MySQL_Config.dbUser}; password={Settings.MySQL_Config.dbPass}");
-                connection = new MySqlConnection(connstring);
-                connection.Open();
-            }
-
-            return true;
-        }
-
-        public void Close()
-        {
-            connection.Close();
-        }
-    }
-}
-*/
 
 namespace Server_Variables
 {
@@ -436,7 +378,7 @@ namespace Settings {
     // you can edit the "127.0.0.1" but nothing else on that line
     public class Socket_Config
     {
-        public static string ip_addr = "127.0.0.1"; // The server IP address
+        public static string ip_addr = "176.31.102.221"; // The server IP address
         public static int port = 90; // The server port (please note you might have to add an exception for incoming traffic on Windows Firewall)
     }
 }

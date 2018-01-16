@@ -50,7 +50,7 @@ namespace Misc
 {
     public class Config
     {
-        public static string ip = "127.0.0.1";
+        public static string ip = "176.31.102.221";
         public static int port = 90;
         public static string projectFolder = "sp";
         public static string fullProjectPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{projectFolder}";
