@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using WebSocketSharp;
-using WebSocketSharp.Net;
 using WebSocketSharp.Server;
 using CryptSharp;
-using System.Threading;
-using System.Data;
 using System.Collections.Specialized;
 
 namespace LEdit_V1_Server
@@ -370,7 +361,8 @@ namespace Server_Variables
     }
 }
 
-namespace Settings {
+namespace Settings
+{
     // You can edit anything in this namespace appart from the variable names and everything before that on that line
     // for example for ip_addr it is public static string ip_addr = "127.0.0.1"
     // you can edit the "127.0.0.1" but nothing else on that line
