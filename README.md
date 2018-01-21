@@ -6,7 +6,7 @@
 <hr />
 
 <h3>Our IDE Recommendation<h3>
-<b>Visual Studio Code</b>
+<u>Visual Studio Code</u>
 
 <h3>Tested IDEs<h3>
 Visual Studio Code
