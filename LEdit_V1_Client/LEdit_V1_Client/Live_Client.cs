@@ -15,23 +15,37 @@ namespace L
             String[] dataParams = e.Data.Split(' ');
             switch (dataParams[0])
             {
-                case "Refresh":
+                case "RefreshFile":
                     string file = dataParams[1];
                     string data = e.Data.Substring(e.Data.IndexOf(dataParams[2]));
-                    string localPath = Misc.Config.fullProjectPath + @"\" + file;
-                    FileMgmt.Manager.UpdateFile(file, data);
+                    Misc.Global.pauseLiveUpdate = true;
+                    FileMgmt.Manager.UpdateFile(Misc.Config.fullProjectPath + @"\" + file, data);
+                    Misc.Global.pauseLiveUpdate = false;
+                    Console.WriteLine("Refresh - File Data");
                     break;
                 case "CreateFile":
-                    FileMgmt.Manager.CreateFile(dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = true;
+                    FileMgmt.Manager.CreateFile(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = false;
+                    Console.WriteLine("New File Addition");
                     break;
                 case "CreateFolder":
-                    FileMgmt.Manager.CreateDirectory(dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = true;
+                    FileMgmt.Manager.CreateDirectory(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = false;
+                    Console.WriteLine("New Folder Addition");
                     break;
                 case "DeleteFile":
-                    FileMgmt.Manager.DeleteFile(dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = true;
+                    FileMgmt.Manager.DeleteFile(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = false;
+                    Console.WriteLine("File Deletion");
                     break;
                 case "DeleteFolder":
-                    FileMgmt.Manager.DeleteDirectory(dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = true;
+                    FileMgmt.Manager.DeleteDirectory(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    Misc.Global.pauseLiveUpdate = false;
+                    Console.WriteLine("Folder Deletion");
                     break;
             }
         }

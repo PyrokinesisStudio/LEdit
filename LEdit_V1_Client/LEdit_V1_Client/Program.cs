@@ -13,6 +13,7 @@ namespace LEdit_V1_Client
     {
         static void Main(string[] args)
         {
+            Misc.Global.pauseLiveUpdate = true;
             SocketSetup();
         }
 
@@ -68,6 +69,7 @@ namespace Misc
     {
         public static WebSocket connectionSocket;
         public static Thread msgHandler;
+        public static bool pauseLiveUpdate = false;
     }
 
     public class Expressions
@@ -129,7 +131,8 @@ namespace Misc
             autoFileActionThread.Start();
             Console.WriteLine("Started");
             Console.ForegroundColor = ConsoleColor.Green;
-
+            ActionRunner.Index.IndexFiles(Misc.Config.fullProjectPath);
+            Global.pauseLiveUpdate = false;
         }
     }
 }

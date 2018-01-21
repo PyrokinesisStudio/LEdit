@@ -77,12 +77,12 @@ namespace Handler
         {
             switch (splitMsg[0])
             {
-                case "UploadFileData":
+                /*case "DEMO_COMMAND":
                     string path = "streetrp\\streetrp.txt";
                     string data = File.ReadAllText(Misc.Config.fullProjectPath + @"\" + path);
                     Misc.Global.connectionSocket.Send($"UploadFileData {path} {data}");
                     AppListener(UploadFileData_OnReceive);
-                    break;
+                    break; */
             }
         }
 

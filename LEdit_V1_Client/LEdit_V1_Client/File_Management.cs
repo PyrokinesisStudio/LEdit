@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Threading;
+using System.Security.Cryptography;
 
 namespace FileMgmt
 {
@@ -12,9 +13,23 @@ namespace FileMgmt
     {
         static int tries = 0;
 
+        public static void MoveFile(string from, string to)
+        {
+            string data = ReadFile(from); // Read the data
+            CreateAndPopulateFile(to, data); // Create and populate the new file
+            DeleteFile(from); // Delete the old file
+        }
+
+        public static void CreateAndPopulateFile(string file, string data)
+        {
+            CreateFile(file);
+            UpdateFile(file, data);
+        }
+
         public static void CreateDirectory(string directory)
         {
-            Directory.CreateDirectory(directory);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
         }
 
         public static bool DeleteDirectory(string directory)
@@ -22,28 +37,47 @@ namespace FileMgmt
             try
             {
                 Directory.Delete(directory, true);
-                tries = 0;
                 return true;
             }
             catch (System.IO.IOException)
             {
-                if (tries < 25)
-                {
-                    Thread.Sleep(250);
-                    DeleteDirectory(directory);
-                }
-                else
-                {
-                    tries = 0;
-                    return false;
-                }
+                Thread.Sleep(250);
+                DeleteDirectory(directory);
             }
             return false;
         }
-
+        
         public static void CreateFile(string file)
         {
-            File.Create(file);
+            if (File.Exists(file))
+            {
+                try
+                {
+                    using (FileStream fs = new FileStream(file, FileMode.Truncate))
+                    {
+                        // Truncated
+                        fs.Close();
+                    }
+                } catch
+                {
+                    Thread.Sleep(250);
+                    CreateFile(file);
+                }
+            } else
+            {
+                try
+                {
+                    using (FileStream fs = new FileStream(file, FileMode.Create))
+                    {
+                        // Created
+                        fs.Close();
+                    }
+                } catch
+                {
+                    Thread.Sleep(250);
+                    CreateFile(file);
+                }
+            }
         }
 
         public static bool DeleteFile(string file)
@@ -51,19 +85,20 @@ namespace FileMgmt
             // Wait for file to become available
             while (!Checker.FileAvailable(file))
             {
-                if (tries != 25)
-                {
-                    Thread.Sleep(100);
-                    tries++;
-                }
-                else
-                {
-                    tries = 0;
-                    return false;
-                }
+                Thread.Sleep(100);
             }
             // Continue
-            File.Delete(file);
+            if (File.Exists(file))
+            {
+                try
+                {
+                    File.Delete(file);
+                } catch
+                {
+                    Thread.Sleep(250);
+                    DeleteFile(file);
+                }
+            }
             tries = 0;
             return true;
         }
@@ -73,21 +108,82 @@ namespace FileMgmt
             // Wait for file to become available
             while (!Checker.FileAvailable(file))
             {
-                if (tries != 25)
-                {
-                    Thread.Sleep(100);
-                    tries++;
-                }
-                else
-                {
-                    tries = 0;
-                    return false;
-                }
+                Thread.Sleep(100);
             }
             // Continue
-            File.WriteAllText(file, data);
+            try
+            {
+                using (FileStream fs = new FileStream(file, FileMode.Open))
+                {
+                    using (StreamWriter sw = new StreamWriter(fs))
+                    {
+                        sw.Write(data);
+                        sw.Close();
+                    }
+                    fs.Close();
+                }
+            } catch
+            {
+                Thread.Sleep(250);
+                UpdateFile(file, data);
+            }
             tries = 0;
             return true;
+        }
+
+        public static string ReadFile(string file)
+        {
+            // Wait for file to become available
+            while (!Checker.FileAvailable(file))
+            {
+                Thread.Sleep(100);
+            }
+            string data = "None";
+            try
+            {
+                using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
+                {
+                    using (StreamReader sr = new StreamReader(fs))
+                    {
+                        data = sr.ReadToEnd();
+                        sr.Close();
+                    }
+                    fs.Close();
+                }
+            } catch
+            {
+                Thread.Sleep(250);
+                ReadFile(file);
+            }
+            return data;
+        }
+
+        public static byte[] CheckFileHash(string fileToCheck)
+        {
+            // Wait for file to become available
+            while (!Checker.FileAvailable(fileToCheck))
+            {
+                Thread.Sleep(100);
+            }
+            try
+            {
+                byte[] hash = null;
+                using (FileStream fs = new FileStream(fileToCheck, FileMode.Open, FileAccess.Read))
+                {
+                    SHA1 sha = new SHA1CryptoServiceProvider();
+                    hash = sha.ComputeHash(fs);
+                    fs.Close();
+                }
+                return hash;
+            }
+            catch (IOException)
+            {
+                Thread.Sleep(250);
+                CheckFileHash(fileToCheck);
+            }
+
+            // Shouldn't get here generally
+            return null;
         }
     }
 

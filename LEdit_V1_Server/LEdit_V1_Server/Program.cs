@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using WebSocketSharp;
 using WebSocketSharp.Net;
 using WebSocketSharp.Server;
-using MySql.Data;
-using MySql.Data.MySqlClient;
 using CryptSharp;
 using System.Threading;
 using System.Data;
@@ -52,28 +50,28 @@ namespace LEdit_V1_Server
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
                     status = ActionRunner.RunFileUpdate(dataParams, dataParams[3], data);
                     Send(status);
-                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"RefreshFile {dataParams[3]} {data}");
+                    Sessions.Broadcast($"RefreshFile {dataParams[3]} {data}");
                     break;
                 case "CreateNewFile":
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
                     status = ActionRunner.RunFileUpload(dataParams, dataParams[3], data);
                     Send(status);
-                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"CreateFile {dataParams[3]}");
+                    Sessions.Broadcast($"CreateFile {dataParams[3]}");
                     break;
                 case "DeleteFile":
                     status = ActionRunner.RunFileDeleter(dataParams);
                     Send(status);
-                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"DeleteFile {dataParams[3]}");
+                    Sessions.Broadcast($"DeleteFile {dataParams[3]}");
                     break;
                 case "CreateNewFolder":
-                    status = ActionRunner.RunFileDeleter(dataParams);
+                    status = ActionRunner.RunFolderCreator(dataParams);
                     Send(status);
-                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"CreateFolder {dataParams[3]}");
+                    Sessions.Broadcast($"CreateFolder {dataParams[3]}");
                     break;
                 case "DeleteFolder":
-                    status = ActionRunner.RunFileDeleter(dataParams);
+                    status = ActionRunner.RunFolderDeleter(dataParams);
                     Send(status);
-                    Server_Variables.Sockets.server.WebSocketServices["/LE"].Sessions.Broadcast($"DeleteFolder {dataParams[3]}");
+                    Sessions.Broadcast($"DeleteFolder {dataParams[3]}");
                     break;
             }
         }
@@ -140,7 +138,7 @@ namespace LEdit_V1_Server
             if (Auth.Login(username, password))
             {
                 WebClient dataRetriever = new WebClient();
-                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestIndex&type=files");
+                string data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=RequestIndex&type=files");
                 return (data);
             }
             else
@@ -157,7 +155,7 @@ namespace LEdit_V1_Server
             if (Auth.Login(username, password))
             {
                 WebClient dataRetriever = new WebClient();
-                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestIndex&type=folders");
+                string data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=RequestIndex&type=folders");
                 return (data);
             }
             else
@@ -174,7 +172,7 @@ namespace LEdit_V1_Server
             if (Auth.Login(username, password))
             {
                 WebClient dataRetriever = new WebClient();
-                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestFileData&file={dataParams[3]}");
+                string data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=RequestFileData&file={dataParams[3]}");
                 return (data);
             }
             else
@@ -192,7 +190,7 @@ namespace LEdit_V1_Server
             if (Auth.Login(username, password))
             {
                 WebClient dataRetriever = new WebClient();
-                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=CreateFolder&folder={dataParams[3]}&username={username}");
+                string data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=CreateFolder&folder={dataParams[3]}&username={username}");
                 return (data);
             }
             else
@@ -209,7 +207,7 @@ namespace LEdit_V1_Server
             if (Auth.Login(username, password))
             {
                 WebClient dataRetriever = new WebClient();
-                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=DeleteFolder&folder={dataParams[3]}&username={username}");
+                string data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=DeleteFolder&folder={dataParams[3]}&username={username}");
                 return (data);
             }
             else
@@ -226,7 +224,7 @@ namespace LEdit_V1_Server
             if (Auth.Login(username, password))
             {
                 WebClient dataRetriever = new WebClient();
-                string data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=DeleteFile&file={dataParams[3]}&username={username}");
+                string data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=DeleteFile&file={dataParams[3]}&username={username}");
                 return (data);
             }
             else
@@ -243,7 +241,7 @@ namespace LEdit_V1_Server
             {
                 WebClient dataRetriever = new WebClient();
                 byte[] response =
-                dataRetriever.UploadValues($"http://sv-01.shiftdev.co.uk/api/api.php?action=CreateFile&file={fileName}&username={username}", new NameValueCollection()
+                dataRetriever.UploadValues($"{Settings.API.api_link}?action=CreateFile&file={fileName}&username={username}", new NameValueCollection()
                 {
                         { "data", System.Uri.EscapeDataString(fileData) }
                 });
@@ -272,7 +270,7 @@ namespace LEdit_V1_Server
             {
                 WebClient dataRetriever = new WebClient();
                 byte[] response =
-                dataRetriever.UploadValues($"http://sv-01.shiftdev.co.uk/api/api.php?action=UploadFileData&file={fileName}&username={username}", new NameValueCollection()
+                dataRetriever.UploadValues($"{Settings.API.api_link}?action=UploadFileData&file={fileName}&username={username}", new NameValueCollection()
                 {
                         { "data", System.Uri.EscapeDataString(fileData) }
                 });
@@ -324,10 +322,10 @@ namespace LEdit_V1_Server
         static void Main(string[] args)
         {
             WebClient dataRetriever = new WebClient();
-            string usernames_data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestUserData&request=username");
+            string usernames_data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=RequestUserData&request=username");
             string[] usernames = usernames_data.Split(' ');
 
-            string passwords_data = dataRetriever.DownloadString($"http://sv-01.shiftdev.co.uk/api/api.php?action=RequestUserData&request=password");
+            string passwords_data = dataRetriever.DownloadString($"{Settings.API.api_link}?action=RequestUserData&request=password");
             string[] passwords = passwords_data.Split(' ');
 
             Server_Variables.Userdata.UserData = new String[usernames.Length, 2];
@@ -380,5 +378,10 @@ namespace Settings {
     {
         public static string ip_addr = "176.31.102.221"; // The server IP address
         public static int port = 90; // The server port (please note you might have to add an exception for incoming traffic on Windows Firewall)
+    }
+
+    public class API
+    {
+        public static string api_link = "http://sv-01.shiftdev.co.uk/api/api.php"; // Link to the api.php file that you installed on your web server
     }
 }

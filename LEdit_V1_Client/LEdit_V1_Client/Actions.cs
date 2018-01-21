@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.IO;
 
+using System.Threading;
+
 namespace ActionRunner
 {
     public struct IndexedFiles
@@ -19,15 +21,6 @@ namespace ActionRunner
         public static List<IndexedFiles> indexedFileList = new List<IndexedFiles>();
         public static List<String> indexedDirectoriesList = new List<String>();
 
-        public static byte[] CheckFileHash(string fileToCheck)
-        {
-            using (Stream stream = File.Open(fileToCheck, FileMode.Open))
-            {
-                SHA1 sha = new SHA1CryptoServiceProvider();
-                return sha.ComputeHash(stream);
-            }
-        }
-
         public static void IndexFiles(string f)
         {
             foreach (string file in Directory.GetFiles(f))
@@ -35,7 +28,7 @@ namespace ActionRunner
                     indexedFileList.Add(new IndexedFiles
                     {
                         path = file,
-                        hash = CheckFileHash(file)
+                        hash = FileMgmt.Manager.CheckFileHash(file)
                     });
                     //Console.WriteLine("File: " + file);
                     //Console.WriteLine(BitConverter.ToString(CheckFileHash(file)));
@@ -74,13 +67,33 @@ namespace ActionRunner
 
             if (newFiles.Count > 0)
             {
+                while (Misc.Global.pauseLiveUpdate)
+                {
+                    Thread.Sleep(100);
+                }
                 foreach (string file in newFiles)
                 {
                     string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
-                    uploadPath.Replace(" ", "_");
+                    string newPath = file;
+                    if (file.Contains(" "))
+                    {
+                        string replacedUploadPath = uploadPath.Replace(" ", "_");
+                        string substr = file.Substring(0, file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                        newPath = substr + replacedUploadPath;
+                        FileMgmt.Manager.MoveFile(file, newPath);
+                        uploadPath = replacedUploadPath;
+                    }
+
+                    string text = FileMgmt.Manager.ReadFile(newPath);
+                    if (text == "" || text == null)
+                    {
+                        text = "// This file is empty";
+                    }
 
                     Console.WriteLine("Detected new file: " + file);
-                    Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {File.ReadAllText(file)}");
+                    Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {text}");
+                    FileStream fs = new FileStream(newPath, FileMode.Open);
+                    fs.Close();
                     Handler.MessageHandler.AppListener(UploadListener);
 
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
@@ -106,10 +119,16 @@ namespace ActionRunner
                 foreach (string file in editedFiles)
                 {
                     string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
-                    uploadPath.Replace(" ", "_");
+//                    uploadPath = uploadPath.Replace(" ", "_"); -- shouldn't need this
 
                     Console.WriteLine("Detected modified file: " + file);
-                    Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {File.ReadAllText(file)}");
+                    string data = "//EMPTY";
+                    if (FileMgmt.Manager.ReadFile(file) != "" && FileMgmt.Manager.ReadFile(file) != null)
+                    {
+                        data = FileMgmt.Manager.ReadFile(file);
+                    } 
+
+                    Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {data}");
 
                     Handler.MessageHandler.AppListener(UploadListener);
 
@@ -135,7 +154,15 @@ namespace ActionRunner
                 foreach (string folder in newFolders)
                 {
                     string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
-                    uploadPath.Replace(" ", "_");
+                    if (folder.Contains(" "))
+                    {
+                        string replacedUploadPath = uploadPath.Replace(" ", "_");
+                        string substr = folder.Substring(0, folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                        string fullPath = substr + replacedUploadPath;
+                        Directory.Move(folder,  fullPath);
+                        uploadPath = replacedUploadPath;
+                    }
+
                     Console.WriteLine("Detected new folder: " + folder);
                     Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
                     Handler.MessageHandler.AppListener(UploadListener);
@@ -162,7 +189,6 @@ namespace ActionRunner
                 foreach (string file in filesToDelete)
                 {
                     string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
-                    uploadPath.Replace(" ", "_");
                     Console.WriteLine("Detected deleted file: " + file);
                     Misc.Global.connectionSocket.Send($"DeleteFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
                     Handler.MessageHandler.AppListener(UploadListener);
@@ -190,7 +216,6 @@ namespace ActionRunner
                 foreach (string folder in foldersToDelete)
                 {
                     string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
-                    uploadPath.Replace(" ", "_");
                     Console.WriteLine("Detected deleted folder: " + folder);
                     Misc.Global.connectionSocket.Send($"DeleteFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
                     Handler.MessageHandler.AppListener(UploadListener);
@@ -243,21 +268,44 @@ namespace ActionRunner
                 bool fileEdited = false;
 
                 // Goes through every indexed file in the indexed file list and checks it against the current file above
-                foreach (IndexedFiles indexedFile in Index.indexedFileList)
+                try
                 {
-                    if (file == indexedFile.path)
+                    foreach (IndexedFiles indexedFile in Index.indexedFileList)
                     {
-                        // The file exists
-                        fileExists = true;
-                        if (BitConverter.ToString(Index.CheckFileHash(file)) == BitConverter.ToString(indexedFile.hash))
+                        if (file == indexedFile.path)
                         {
+                            // The file exists
+                            fileExists = true;
+                            string hash = "NA";
+                            try
+                            {
+                                hash = BitConverter.ToString(FileMgmt.Manager.CheckFileHash(file));
+                            }
+                            catch (System.ArgumentNullException)
+                            {
+                                Console.WriteLine("Retrying refresh");
+                                Thread.Sleep(150);
+                                Console.WriteLine("Re-Indexing");
+                                Index.IndexFiles(f);
+                                Console.WriteLine("Done indexing, retrying");
+                                CheckForNewFilesFolders(f);
+                            }
 
-                        } else
-                        {
-                            // The file has been edited
-                            fileEdited = true;
+
+                            if (hash == BitConverter.ToString(indexedFile.hash))
+                            {
+
+                            }
+                            else
+                            {
+                                // The file has been edited
+                                fileEdited = true;
+                            }
                         }
                     }
+                } catch (System.InvalidOperationException)
+                {
+                    CheckForNewFilesFolders(f);
                 }
 
                 // Adds the appropriate items to the lists declared above

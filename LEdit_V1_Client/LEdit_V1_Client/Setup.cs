@@ -43,8 +43,10 @@ namespace Setup
 
         public static void IndexFiles_OnReceive(object sender, WebSocketSharp.MessageEventArgs e)
         {
-            string data = e.Data.Substring(0, e.Data.Length - 1);
-            files = data.Split(Convert.ToChar(" "));
+            if (e.Data.Length != 0) {
+                string data = e.Data.Substring(0, e.Data.Length);
+                files = data.Split(Convert.ToChar(" "));
+            }
 
             Handler.MessageHandler.CloseListener(IndexFiles_OnReceive);
 
@@ -80,10 +82,13 @@ namespace Setup
         {
             Console.WriteLine("Creating and Populating Files");
 
-            foreach (string file in files)
+            if (files != null)
             {
-                if (!File.Exists(Misc.Config.fullProjectPath + @"\" + file))
-                    File.Create(Misc.Config.fullProjectPath + @"\" + file);
+                foreach (string file in files)
+                {
+                    if (!File.Exists(Misc.Config.fullProjectPath + @"\" + file))
+                        FileMgmt.Manager.CreateFile(Misc.Config.fullProjectPath + @"\" + file);
+                }
             }
 
             RequestFileData();
@@ -91,11 +96,18 @@ namespace Setup
 
         public static void RequestFileData()
         {
-            DataToRunThrough = files.Count();
+            try
+            {
+                DataToRunThrough = files.Count();
+            } catch (ArgumentNullException)
+            {
+                Misc.Userdata.UserReady = true;
+
+                Misc.Expressions.OnFinishedLoading();
+                return;
+            }
             DataRanThrough = 0;
-
             Misc.Global.connectionSocket.Send($"RequestFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {files[DataRanThrough]}");
-
             Handler.MessageHandler.AppListener(RequestFileData_OnReceive);
         }
 
@@ -126,8 +138,6 @@ namespace Setup
 
                 Console.WriteLine("Creating File Index: DONE");
 
-                Console.ReadKey();
-
                 Misc.Userdata.UserReady = true;
 
                 Misc.Expressions.OnFinishedLoading();
@@ -142,20 +152,10 @@ namespace Setup
             for (int key = 0; key < files.Count(); key++)
             {
                 string progress = key + "/" + DataToRunThrough;
-                FileMgmt.Manager.UpdateFile($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);
-
-                try
-                {
-                    File.WriteAllText($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);
-                } catch (System.IO.IOException)
-                {
-                    Thread.Sleep(100);
-                    PopulateFiles(fileNames, fileData);
-                }
+                FileMgmt.Manager.UpdateFile($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);              
                 Console.WriteLine($"Loading (x/y): {progress}");
                 key++;
             }
-
         }
     }
 }

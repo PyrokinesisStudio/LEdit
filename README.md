@@ -1,9 +1,22 @@
-<h1>LEdit<h1>
+<h1>LEdit (VA)<h1>
 
 <hr />
-<h3>All connections aren't through an SSL so they're vulnerable (at least I think thats how it is)</h3>
-<h3>...So I wouldn't recommend using this until I take this text out of the README</h3>
+<h3>Version Information: VA 1.1 | S2</h3>
+<h3>This is an <b>alpha</b> version!</h3>
 <hr />
+
+<h3>Our IDE Recommendation<h3>
+<b>Visual Studio Code</b>
+
+<h3>Tested IDEs<h3>
+Visual Studio Code
+ -> Works perfectly
+Sublime Text
+ -> Alerts you when a change has been made to an open file
+ -> No comparison feature to compare with other versions of the file
+
+<h3>Bugs!</h3>
+We would <b>REALLY</b> appreciate it if you guys alerted us immediately about any bugs and it would help tremendously if you guys could tell us accurately how you came to this bug
 
 <h3>What is LEdit?</h3>
 LEdit is a piece of software, which allows teams to live share their code to other members and also just edit it normally, so what will happen is that you will configure your team directory on the server application and everything in that directory will be shared to your other members (who you have to create an account for)
@@ -17,12 +30,28 @@ LEdit also tracks what people do and so if somebody needs to revert back to a pr
 
 Finally, LEdit automatically backs up your data so if there's a problem, and your server goes down, you can take your backup, move it onto a temporary server and use LEdit again, as normal, then once your main server is back online, you can just transfer the data over again very simply.
 
-<h3>Setting Up LEdit [NOTE: LEdit is not ready yet]</h3>
+<h3>Requirements</h3>
+1. A web server
+ -> To host the API
+
+2. A windows server
+ -> To host the app
+
+<h3>Setting Up LEdit</h3>
 [An easier way to set things up will be done in future, but for now you will have to manually compile the app]
 
 1. Open the server Visual Studio Project and edit "program.cs"
- -> Configure everything in the Settings NameSpace (so far, the classes MySQL_Config and Socket_Config)
+ -> Configure everything in the Settings Namespace to how you would like it
+  -> Be sure to add in your server IP
 
-2. Import the database file into your database (I haven't uploaded it yet - I will do within a few weeks)
+2. Configure the client application to how you would like it
+ -> Be sure to remember to add in your server IP 
 
-3. Create your user accounts (right now you can't as all passwords are hashed in BCrypt)
+3. Create your user accounts (right now you can't)
+ -> A tool to create those will be coming very soon
+
+4. Import the setup.sql file into your database
+
+5. Upload the web server files to your web server and configure your database and directory information
+ -> THE WEB SERVER SHOULD <b>ONLY</b> allow connections from the server's IP address
+  -> If it isn't then you <b>WILL</b> be <b>MASSIVELY</b> vulnerable
