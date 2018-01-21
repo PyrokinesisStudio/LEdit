@@ -2,7 +2,9 @@
 
 <hr />
 <h3>Version Information: VA 1.1 | S2</h3>
-<h3>This is an <b>alpha</b> version!</h3>
+<h3>ALPHA</h3>
+I haven't created a user account creator, so if you'd like to create one, it uses BCrypt (if you want to use .NET I recommend the CryptSharp library), you can create a web one very easily in PHP.
+I will probably create one relatively soon, so bare with me please :3
 <hr />
 
 <h3>Our IDE Recommendation</h3>
