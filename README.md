@@ -5,8 +5,8 @@
 <h3>This is an <b>alpha</b> version!</h3>
 <hr />
 
-<h3>Our IDE Recommendation<h3>
-<u>Visual Studio Code</u>
+<h3>Our IDE Recommendation</h3>
+<b>Visual Studio Code</b>
 
 <h3>Tested IDEs<h3>
 Visual Studio Code
