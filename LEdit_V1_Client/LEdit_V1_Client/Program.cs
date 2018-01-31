@@ -79,6 +79,7 @@ namespace Misc
                 Console.WriteLine("Successfully logged in");
                 Console.WriteLine($"Welcome back {Userdata.GreetName}, please wait while we set things up for you.");
                 Console.WriteLine("Loading...");
+                FileMgmt.Manager.DeleteDirectory(Config.fullProjectPath);
                 Setup.Index.IndexDirectories();
 
             }

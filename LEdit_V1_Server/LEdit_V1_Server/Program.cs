@@ -64,6 +64,15 @@ namespace LEdit_V1_Server
                     Send(status);
                     Sessions.Broadcast($"DeleteFolder {dataParams[3]}");
                     break;
+                case "RunLoginUC":
+                    if (ActionRunner.RunLoginUAC(dataParams)) {
+                        status = "True";
+                    } else
+                    {
+                        status = "False";
+                    }
+                    Send(status);
+                    break;
             }
         }
 
@@ -114,6 +123,52 @@ namespace LEdit_V1_Server
                     tf = true;
                 }
                 else
+                {
+                    tf = false;
+                }
+            }
+            return tf;
+        }
+
+        public static bool RunLoginUAC(String[] dataParams)
+        {
+            bool tf = true;
+            string username = null;
+            string password = null;
+            try
+            {
+                username = dataParams[1];
+                password = dataParams[2];
+                if (username == null || username == "" || username == " ")
+                {
+                    throw new IndexOutOfRangeException("Null Credentials");
+                }
+                if (password == null || password == "" || password == " ")
+                {
+                    throw new IndexOutOfRangeException("Null Credentials");
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("Login Failed - Data sent was incomplete");
+                tf = false;
+            }
+
+            if (tf)
+            {
+                if (!Auth.Login(username, password))
+                {
+                    tf = false;
+                }
+            }
+
+            if (tf)
+            {
+                int rank = Auth.CheckRank(username);
+                if (rank == 0)
+                {
+                    tf = true;
+                } else
                 {
                     tf = false;
                 }
@@ -289,7 +344,7 @@ namespace LEdit_V1_Server
         public static bool Login(string username, string password)
         {
             username = username.ToUpper();
-            String[,] storedUserData = Server_Variables.Userdata.UserData; // I'm very lazy :3 - Soy muy perezoso :3
+            String[,] storedUserData = Server_Variables.Userdata.UserData; // I'm very lazy :3 - Estoy muy perezoso :3
             
             for (int i = 0; i < storedUserData.Length; i++)
             {
@@ -305,6 +360,13 @@ namespace LEdit_V1_Server
                 }
             }
             return false;
+        }
+
+        public static int CheckRank(string username)
+        {
+            WebClient dataRetriever = new WebClient();
+            string rank = dataRetriever.DownloadString($"{Settings.API.api_link}?action=CheckRank&user={username}");
+            return Convert.ToInt32(rank);
         }
     }
 
@@ -368,7 +430,7 @@ namespace Settings
     // you can edit the "127.0.0.1" but nothing else on that line
     public class Socket_Config
     {
-        public static string ip_addr = "176.31.102.221"; // The server IP address
+        public static string ip_addr = "127.0.0.1"; // The server IP address
         public static int port = 90; // The server port (please note you might have to add an exception for incoming traffic on Windows Firewall)
     }
 

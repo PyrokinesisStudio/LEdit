@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading;
 using System.Security.Cryptography;
 
@@ -6,8 +7,6 @@ namespace FileMgmt
 {
     class Manager
     {
-        static int tries = 0;
-
         public static void MoveFile(string from, string to)
         {
             string data = ReadFile(from); // Read the data
@@ -31,8 +30,11 @@ namespace FileMgmt
         {
             try
             {
-                Directory.Delete(directory, true);
-                return true;
+                if (Directory.Exists(directory))
+                {
+                    Directory.Delete(directory, true);
+                    return true;
+                }
             }
             catch (System.IO.IOException)
             {
@@ -83,18 +85,19 @@ namespace FileMgmt
                 Thread.Sleep(100);
             }
             // Continue
-            if (File.Exists(file))
+
+            try
             {
-                try
+                if (File.Exists(file))
                 {
                     File.Delete(file);
-                } catch
-                {
-                    Thread.Sleep(250);
-                    DeleteFile(file);
                 }
             }
-            tries = 0;
+            catch
+            {
+                Thread.Sleep(250);
+                DeleteFile(file);
+            }
             return true;
         }
 
@@ -122,7 +125,6 @@ namespace FileMgmt
                 Thread.Sleep(250);
                 UpdateFile(file, data);
             }
-            tries = 0;
             return true;
         }
 
@@ -162,14 +164,17 @@ namespace FileMgmt
             }
             try
             {
-                byte[] hash = null;
-                using (FileStream fs = new FileStream(fileToCheck, FileMode.Open, FileAccess.Read))
+                if (File.Exists(fileToCheck))
                 {
-                    SHA1 sha = new SHA1CryptoServiceProvider();
-                    hash = sha.ComputeHash(fs);
-                    fs.Close();
+                    byte[] hash = null;
+                    using (FileStream fs = new FileStream(fileToCheck, FileMode.Open, FileAccess.Read))
+                    {
+                        SHA1 sha = new SHA1CryptoServiceProvider();
+                        hash = sha.ComputeHash(fs);
+                        fs.Close();
+                    }
+                    return hash;
                 }
-                return hash;
             }
             catch (IOException)
             {
@@ -186,19 +191,22 @@ namespace FileMgmt
     {
         public static bool FileAvailable(string file)
         {
-            FileStream fs = null;
-            try
+            if (File.Exists(file))
             {
-                fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None);
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-            finally
-            {
-                if (fs != null)
-                    fs.Close();
+                FileStream fs = null;
+                try
+                {
+                    fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None);
+                }
+                catch (IOException)
+                {
+                    return false;
+                }
+                finally
+                {
+                    if (fs != null)
+                        fs.Close();
+                }
             }
             return true;
         }
