@@ -7,6 +7,17 @@ namespace FileMgmt
 {
     class Manager
     {
+        public static bool FileExists(string fileToCheck)
+        {
+            return File.Exists(fileToCheck);
+
+        }
+
+        public static bool DirExists(string folderToCheck)
+        {
+            return Directory.Exists(folderToCheck);
+        }
+
         public static void MoveFile(string from, string to)
         {
             string data = ReadFile(from); // Read the data
