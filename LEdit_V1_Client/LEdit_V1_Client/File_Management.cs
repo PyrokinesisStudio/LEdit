@@ -47,7 +47,7 @@ namespace FileMgmt
                     return true;
                 }
             }
-            catch (System.IO.IOException)
+            catch (IOException)
             {
                 Thread.Sleep(250);
                 DeleteDirectory(directory);

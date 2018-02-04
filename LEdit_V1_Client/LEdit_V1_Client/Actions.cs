@@ -52,7 +52,7 @@ namespace ActionRunner
                 CheckForNewFilesFolders(Misc.Config.fullProjectPath);
 
                 CheckFileFolderDelete(Misc.Config.fullProjectPath);
-                System.Threading.Thread.Sleep(150);
+                Thread.Sleep(150);
             }
 
             Console.WriteLine("Change Detected");
@@ -87,8 +87,7 @@ namespace ActionRunner
 
                     Console.WriteLine("Detected new file: " + file);
                     Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {text}");
-                    FileStream fs = new FileStream(newPath, FileMode.Open);
-                    fs.Close();
+                    FileMgmt.Manager.CreateFile(newPath);
                     Handler.MessageHandler.AppListener(UploadListener);
 
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)

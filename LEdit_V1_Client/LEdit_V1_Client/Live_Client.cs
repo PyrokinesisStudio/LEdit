@@ -13,16 +13,15 @@ namespace L
                 case "RefreshFile":
                     string file = dataParams[1];
                     string data = e.Data.Substring(e.Data.IndexOf(dataParams[2]));
-                    if (FileMgmt.Manager.ReadFile(file) != data)
+                    string fileToModify = Misc.Config.fullProjectPath + @"\" + file;
+                    if (FileMgmt.Manager.ReadFile(fileToModify) != data)
                     {
                         Misc.Global.pauseLiveUpdate = true;
-                        string fileToModify = Misc.Config.fullProjectPath + @"\" + file;
                         FileMgmt.Manager.UpdateFile(fileToModify, data);
                         for (int i = 0; i < ActionRunner.Index.indexedFileList.Count; i++)
                         {
                             if (ActionRunner.Index.indexedFileList[i].path == fileToModify)
                             {
-                                //ActionRunner.Index.indexedFileList[i].hash = FileMgmt.Manager.CheckFileHash(fileToModify);
                                 ActionRunner.Index.indexedFileList.RemoveAt(i);
                                 ActionRunner.Index.indexedFileList.Add(new ActionRunner.IndexedFiles
                                 {
