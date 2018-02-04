@@ -16,8 +16,6 @@ namespace LEdit_V1_Client
 
         public static void SocketSetup()
         {
-            Console.WriteLine(Misc.Config.ip);
-            Console.ReadKey();
             Misc.Global.connectionSocket = new WebSocket($"ws://{Misc.Config.ip}:{Misc.Config.port}/LE");
             Misc.Global.connectionSocket.Connect();
 

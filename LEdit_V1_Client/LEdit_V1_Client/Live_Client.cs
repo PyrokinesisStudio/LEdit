@@ -19,25 +19,44 @@ namespace L
                     break;
                 case "CreateFile":
                     Misc.Global.pauseLiveUpdate = true;
-                    FileMgmt.Manager.CreateFile(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    string fileToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[1];
+                    FileMgmt.Manager.CreateFile(fileToCreate);
+                    ActionRunner.Index.indexedFileList.Add(new ActionRunner.IndexedFiles
+                    {
+                        path = fileToCreate,
+                        hash = FileMgmt.Manager.CheckFileHash(fileToCreate)
+                    });
                     Misc.Global.pauseLiveUpdate = false;
                     Console.WriteLine("New File Addition");
                     break;
                 case "CreateFolder":
                     Misc.Global.pauseLiveUpdate = true;
-                    FileMgmt.Manager.CreateDirectory(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    string folderToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[1];
+                    FileMgmt.Manager.CreateDirectory(folderToCreate);
+                    ActionRunner.Index.indexedDirectoriesList.Add(folderToCreate);
                     Misc.Global.pauseLiveUpdate = false;
                     Console.WriteLine("New Folder Addition");
                     break;
                 case "DeleteFile":
                     Misc.Global.pauseLiveUpdate = true;
-                    FileMgmt.Manager.DeleteFile(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    string folderToDelete = Misc.Config.fullProjectPath + @"\" + dataParams[1];
+                    FileMgmt.Manager.DeleteFile(folderToDelete);
+                    for (int i = 0; i < ActionRunner.Index.indexedFileList.Count; i++)
+                    {
+                        if (ActionRunner.Index.indexedFileList[i].path == folderToDelete)
+                        {
+                            ActionRunner.Index.indexedFileList.RemoveAt(i);
+                            break;
+                        }
+                    }
                     Misc.Global.pauseLiveUpdate = false;
                     Console.WriteLine("File Deletion");
                     break;
                 case "DeleteFolder":
                     Misc.Global.pauseLiveUpdate = true;
-                    FileMgmt.Manager.DeleteDirectory(Misc.Config.fullProjectPath + @"\" + dataParams[1]);
+                    string folderToRemove = Misc.Config.fullProjectPath + @"\" + dataParams[1];
+                    FileMgmt.Manager.DeleteDirectory(folderToRemove);
+                    ActionRunner.Index.indexedDirectoriesList.Remove(folderToRemove);
                     Misc.Global.pauseLiveUpdate = false;
                     Console.WriteLine("Folder Deletion");
                     break;
