@@ -1,7 +1,7 @@
 ﻿using System;
 using WebSocketSharp;
 using System.Threading;
-
+using System.Configuration;
 namespace LEdit_V1_Client
 {
     public class Program
