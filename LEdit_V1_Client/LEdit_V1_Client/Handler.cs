@@ -70,8 +70,6 @@ namespace Handler
         {
             switch (splitMsg[0])
             {
-                     switch (splitMsg[0])
-            {
                 case "Help":
                     Console.WriteLine("Commands: ");
                     Console.WriteLine("Reconnect");
