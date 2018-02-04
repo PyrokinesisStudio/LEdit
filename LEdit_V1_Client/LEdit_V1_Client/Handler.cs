@@ -1,5 +1,5 @@
 ﻿using System;
-
+ using System.Configuration;
 namespace Handler
 {
     class MessageHandler
@@ -70,6 +70,64 @@ namespace Handler
         {
             switch (splitMsg[0])
             {
+                     switch (splitMsg[0])
+            {
+                case "Help":
+                    Console.WriteLine("Commands: ");
+                    Console.WriteLine("Reconnect");
+                    Console.WriteLine("Settings");
+                    break;
+                case "Settings":
+                    Console.WriteLine("Current Settings");
+                    Console.WriteLine("IP: {0}", Misc.Config.ip);
+                    Console.WriteLine("PORT: {0}", Misc.Config.port);
+                    Console.WriteLine("FOLDER: {0}", Misc.Config.projectFolder);
+                    Console.WriteLine("To change a setting type: Change(setting) (value)");
+                    break;
+                case "ChangeIP":
+                    string Value = splitMsg[1];
+                    try
+                    {
+                        var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                        config.AppSettings.Settings["ip"].Value = Value;
+                        config.Save(ConfigurationSaveMode.Modified);
+                        ConfigurationManager.RefreshSection("ip");
+                        Console.WriteLine("Restart for changes to take effect");
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Run LEdit in administrator  mode to change this setting");
+                    }
+                    ConfigurationManager.RefreshSection("appSettings");
+                    break;
+                case "ChangePORT":
+                    string Value1 = splitMsg[1];
+                    try
+                    {
+                        var config1 = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                        config1.AppSettings.Settings["port"].Value = Value1;
+                        config1.Save(ConfigurationSaveMode.Modified);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Run LEdit in administrator  mode to change this setting");
+                    }
+                    ConfigurationManager.RefreshSection("appSettings");
+                    break;
+                case "ChangeFOLDER":
+                    string Value2 = splitMsg[1];
+                    try
+                    {
+                        var config2 = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                        config2.AppSettings.Settings["ProjectFolder"].Value = Value2;
+                        config2.Save(ConfigurationSaveMode.Modified);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Run LEdit in administrator  mode to change this setting");
+                    }
+                    ConfigurationManager.RefreshSection("appSettings");
+                    break;
                 /*case "DEMO_COMMAND":
                     string path = "streetrp\\streetrp.txt";
                     string data = File.ReadAllText(Misc.Config.fullProjectPath + @"\" + path);
