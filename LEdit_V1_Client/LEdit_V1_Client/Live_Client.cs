@@ -9,11 +9,25 @@ namespace L
             String[] dataParams = e.Data.Split(' ');
             switch (dataParams[0])
             {
+                // TO DO
                 case "RefreshFile":
                     string file = dataParams[1];
                     string data = e.Data.Substring(e.Data.IndexOf(dataParams[2]));
                     Misc.Global.pauseLiveUpdate = true;
-                    FileMgmt.Manager.UpdateFile(Misc.Config.fullProjectPath + @"\" + file, data);
+                    string fileToModify = Misc.Config.fullProjectPath + @"\" + file;
+                    FileMgmt.Manager.UpdateFile(fileToModify, data);
+                    for (int i = 0; i < ActionRunner.Index.indexedFileList.Count; i++)
+                    {
+                        if (ActionRunner.Index.indexedFileList[i].path == fileToModify)
+                        {
+                            //ActionRunner.Index.indexedFileList[i].hash = FileMgmt.Manager.CheckFileHash(fileToModify);
+                            ActionRunner.Index.indexedFileList.RemoveAt(i);
+                            ActionRunner.Index.indexedFileList.Add(new ActionRunner.IndexedFiles {
+                                hash = FileMgmt.Manager.CheckFileHash(fileToModify),
+                                path = fileToModify
+                            });
+                        }
+                    }
                     Misc.Global.pauseLiveUpdate = false;
                     Console.WriteLine("Refresh - File Data");
                     break;
