@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Client.exe" size="21984">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Client.exe" size="23520">
       <assemblyIdentity name="LEdit_V1_Client" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>XuhGQQpRbJ1BzvCFahXU1cT9YNpUZbm2LrpxecGTMhk=</dsig:DigestValue>
+        <dsig:DigestValue>Pf3Wwoycqw27t/zq7oB02i6dbJL2FyPJUeaGof1+EHo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -65,13 +65,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="LEdit_V1_Client.exe.config" size="184">
+  <file name="LEdit_V1_Client.exe.config" size="334">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>jWVCngsqgsEdPtxOoE7SAK7f6h1++LmE6IqOl8/1R3A=</dsig:DigestValue>
+      <dsig:DigestValue>xl1ytWwwG/7gfHgPQxD72wxUK0lEy47VnEsjaRjuBCs=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

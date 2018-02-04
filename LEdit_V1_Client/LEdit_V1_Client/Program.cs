@@ -2,6 +2,8 @@
 using WebSocketSharp;
 using System.Threading;
 using System.Configuration;
+using System.Net;
+
 namespace LEdit_V1_Client
 {
     public class Program
@@ -14,6 +16,8 @@ namespace LEdit_V1_Client
 
         public static void SocketSetup()
         {
+            Console.WriteLine(Misc.Config.ip);
+            Console.ReadKey();
             Misc.Global.connectionSocket = new WebSocket($"ws://{Misc.Config.ip}:{Misc.Config.port}/LE");
             Misc.Global.connectionSocket.Connect();
 
@@ -59,9 +63,9 @@ namespace Misc
 {
     public class Config
     {
-        public static string ip = ConfigurationManager.AppSettings.Get("ip");
-        public static int port = Convert.ToInt16(ConfigurationManager.AppSettings.Get("port"));
-        public static string projectFolder = ConfigurationManager.AppSettings.Get("projectFolder");
+        public static IPAddress ip = IPAddress.Parse("176.31.102.221");
+        public static int port = 90;
+        public static string projectFolder = "sp";
         public static string fullProjectPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{projectFolder}";
     }
 
