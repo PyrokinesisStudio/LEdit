@@ -32,7 +32,20 @@ namespace LEdit_V1_Client
                     // Directly sends message and listens for a response
                     Misc.Global.connectionSocket.Send(msg); // Send Message to Server
                     Handler.MessageHandler.UserListener(splitMsg); // Listen for Reply
-                } else
+                }
+                else if (splitMsg[0] == "Settings")
+                {
+                    Handler.MessageHandler.ClientActions(splitMsg);
+                }
+                else if (splitMsg[0] == "Help")
+                {
+                    Handler.MessageHandler.ClientActions(splitMsg);
+                }
+                else if (splitMsg[0] == "Reconnect")
+                {
+                    SocketSetup();
+                }
+                else
                 {
                     // Allows for control of message receiving
                     Handler.MessageHandler.ClientActions(splitMsg); 
@@ -46,9 +59,9 @@ namespace Misc
 {
     public class Config
     {
-        public static string ip = "176.31.102.221";
-        public static int port = 90;
-        public static string projectFolder = "sp";
+        public static string ip = ConfigurationManager.AppSettings.Get("ip");
+        public static int port = Convert.ToInt16(ConfigurationManager.AppSettings.Get("port"));
+        public static string projectFolder = ConfigurationManager.AppSettings.Get("projectFolder");
         public static string fullProjectPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{projectFolder}";
     }
 
