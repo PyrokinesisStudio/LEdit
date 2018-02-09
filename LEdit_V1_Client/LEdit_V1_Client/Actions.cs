@@ -13,6 +13,7 @@ namespace ActionRunner
 
     public class Index
     {
+        bool indexing = false;
         public static List<IndexedFiles> indexedFileList = new List<IndexedFiles>();
         public static List<String> indexedDirectoriesList = new List<String>();
 
@@ -60,6 +61,54 @@ namespace ActionRunner
             // Just saying, the order of this is vital to its functionality
             // Due to the way the renaming works
 
+            if (newFolders.Count > 0)
+            {
+                foreach (string folder in newFolders)
+                {
+                    string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                    if (folder.Contains(" "))
+                    {
+                        string replacedUploadPath = uploadPath.Replace(" ", "_");
+                        string substr = folder.Substring(0, folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                        string fullPath = substr + replacedUploadPath;
+                        int num = 0;
+                        string idPath = fullPath;
+
+                        while (FileMgmt.Manager.DirExists(idPath))
+                        {
+                            num++;
+                            idPath = fullPath;
+                            idPath = idPath + "_[" + num + "]";
+                        }
+
+                        fullPath = idPath;
+
+                        Directory.Move(folder, fullPath);
+
+                        uploadPath = fullPath.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
+                    }
+
+                    Console.WriteLine("Detected new folder: " + folder);
+                    Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
+                    {
+                        if (e.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + e.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
+                }
+                newFolders.Clear();
+            }
+
             if (newFiles.Count > 0)
             {
                 while (Misc.Global.pauseLiveUpdate)
@@ -75,8 +124,23 @@ namespace ActionRunner
                         string replacedUploadPath = uploadPath.Replace(" ", "_");
                         string substr = file.Substring(0, file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
                         newPath = substr + replacedUploadPath;
+                        string extension = Path.GetExtension(newPath);
+                        int num = 0;
+                        string idPath = newPath;
+
+                        while (FileMgmt.Manager.FileExists(idPath))
+                        {
+                            num++;
+                            idPath = newPath;
+                            idPath = idPath.Substring(0, idPath.IndexOf(extension));
+                            idPath = idPath + "_[" + num + "]" + extension;
+                        }
+
+                        newPath = idPath;
+                        
                         FileMgmt.Manager.MoveFile(file, newPath);
-                        uploadPath = replacedUploadPath;
+
+                        uploadPath = idPath.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
                     }
 
                     string text = FileMgmt.Manager.ReadFile(newPath);
@@ -141,41 +205,6 @@ namespace ActionRunner
                     }
                 }
                 editedFiles.Clear();
-            }
-
-            if (newFolders.Count > 0)
-            {
-                foreach (string folder in newFolders)
-                {
-                    string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
-                    if (folder.Contains(" "))
-                    {
-                        string replacedUploadPath = uploadPath.Replace(" ", "_");
-                        string substr = folder.Substring(0, folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
-                        string fullPath = substr + replacedUploadPath;
-                        Directory.Move(folder,  fullPath);
-                        uploadPath = replacedUploadPath;
-                    }
-
-                    Console.WriteLine("Detected new folder: " + folder);
-                    Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
-                    Handler.MessageHandler.AppListener(UploadListener);
-                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
-                    {
-                        if (e.Data == "True")
-                        {
-                            Console.WriteLine("Complete");
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Failed (1) file transfer: " + e.Data);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                        }
-                        Handler.MessageHandler.CloseListener(UploadListener);
-                    }
-                }
-                newFolders.Clear();
             }
 
             if (filesToDelete.Count > 0)
