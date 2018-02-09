@@ -56,17 +56,30 @@ class MySQL {
     }
     function CreateFile($filename, $username, $data) {
         require "connect.php";
-        $q1 = $conn->prepare("INSERT INTO files (data, file, last_user) VALUES (:fdata, :file, :user)");
-        $q1->bindParam(":fdata", $data);
-        $q1->bindParam(":file", $filename);
-        $q1->bindParam(":user", $username);
-        $q1->execute();
+        $continue = true;
+        $q0 = $conn->prepare("SELECT file FROM files");
+        $q0->execute();
 
-        $q2 = $conn->prepare('INSERT INTO tracker (id, user, ip, file, data) VALUES (NULL, :usern, "none", :file, :data)');
-        $q2->bindParam(":usern", $username);
-        $q2->bindParam(":file", $filename);
-        $q2->bindParam(":data", $data);
-        $q2->execute();
+        while ($res = $q0->fetch(PDO::FETCH_ASSOC)) {
+            if ($res['file'] == $filename) {
+                $continue = false;
+                break;
+            }
+        }
+
+        if ($continue) {
+            $q1 = $conn->prepare("INSERT INTO files (data, file, last_user) VALUES (:fdata, :file, :user)");
+            $q1->bindParam(":fdata", $data);
+            $q1->bindParam(":file", $filename);
+            $q1->bindParam(":user", $username);
+            $q1->execute();
+
+            $q2 = $conn->prepare('INSERT INTO tracker (id, user, ip, file, data) VALUES (NULL, :usern, "none", :file, :data)');
+            $q2->bindParam(":usern", $username);
+            $q2->bindParam(":file", $filename);
+            $q2->bindParam(":data", $data);
+            $q2->execute();
+        }
     }
     function DeleteFile($file, $username) {
         require "connect.php";
@@ -81,14 +94,28 @@ class MySQL {
     }
     function CreateFolder($folder, $username) {
         require "connect.php";
-        $q1 = $conn->prepare("INSERT INTO folders (folder) VALUES (:folder)");
-        $q1->bindParam(":folder", $folder);
-        $q1->execute();
 
-        $q2 = $conn->prepare('INSERT INTO tracker (id, user, ip, file, data) VALUES (NULL, :usern, "none", :folder, "FOLDER")');
-        $q2->bindParam(":usern", $username);
-        $q2->bindParam(":folder", $folder);
-        $q2->execute();
+        $continue = true;
+        $q0 = $conn->prepare("SELECT folder FROM folders");
+        $q0->execute();
+
+        while ($res = $q0->fetch(PDO::FETCH_ASSOC)) {
+            if ($res['folder'] == $folder) {
+                $continue = false;
+                break;
+            }
+        }
+
+        if ($continue) {
+            $q1 = $conn->prepare("INSERT INTO folders (folder) VALUES (:folder)");
+            $q1->bindParam(":folder", $folder);
+            $q1->execute();
+
+            $q2 = $conn->prepare('INSERT INTO tracker (id, user, ip, file, data) VALUES (NULL, :usern, "none", :folder, "FOLDER")');
+            $q2->bindParam(":usern", $username);
+            $q2->bindParam(":folder", $folder);
+            $q2->execute();
+        }
     }
     function DeleteFolder($folder, $username) {
         require "connect.php";
@@ -100,6 +127,16 @@ class MySQL {
         $q2->bindParam(":usern", $username);
         $q2->bindParam(":folder", $folder);
         $q2->execute();
+    }
+    function GetRank($username) {
+        require "connect.php";
+        $q1 = $conn->prepare("SELECT * FROM `users` WHERE `username`=:username");
+        $q1->bindParam(":username", $username);
+        $q1->execute();
+
+        while ($res = $q1->fetch(PDO::FETCH_ASSOC)) {
+            echo $res['authLevel'];
+        }
     }
 }
 ?>
