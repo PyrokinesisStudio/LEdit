@@ -7,7 +7,7 @@ namespace Setup
 {
     public class Index
     {
-        public static String[] files;
+        public static String[,] files;
         public static String[] directories;
 
         public static void IndexDirectories()
@@ -15,19 +15,21 @@ namespace Setup
             Misc.Global.connectionSocket.Send($"RequestDirectoryIndex {Misc.Userdata.Username} {Misc.Userdata.Password}");
 
             Handler.MessageHandler.AppListener(IndexDirectories_OnReceive); // Run the function IndexDirectories_OnReceive when the server has replied
+
+            void IndexDirectories_OnReceive(object sender, WebSocketSharp.MessageEventArgs e)
+            {
+                Console.WriteLine("Indexing Directories");
+
+                directories = e.Data.Split(Convert.ToChar(" ")); // Split the directories and save them to the array
+
+                Handler.MessageHandler.CloseListener(IndexDirectories_OnReceive); // Close the event listener
+
+                Console.WriteLine("Directory Indexing: DONE");
+                IndexFiles();
+            }
         }
 
-        public static void IndexDirectories_OnReceive(object sender, WebSocketSharp.MessageEventArgs e)
-        {
-            Console.WriteLine("Indexing Directories");
 
-            directories = e.Data.Split(Convert.ToChar(" ")); // Split the directories and save them to the array
-
-            Handler.MessageHandler.CloseListener(IndexDirectories_OnReceive); // Close the event listener
-
-            Console.WriteLine("Directory Indexing: DONE");
-            IndexFiles();
-        }
 
         public static void IndexFiles()
         {
@@ -36,19 +38,26 @@ namespace Setup
             Misc.Global.connectionSocket.Send($"RequestFileIndex {Misc.Userdata.Username} {Misc.Userdata.Password}");
             
             Handler.MessageHandler.AppListener(IndexFiles_OnReceive);
-        }
 
-        public static void IndexFiles_OnReceive(object sender, WebSocketSharp.MessageEventArgs e)
-        {
-            if (e.Data.Length != 0) {
-                string data = e.Data.Substring(0, e.Data.Length);
-                files = data.Split(Convert.ToChar(" "));
+            void IndexFiles_OnReceive(object sender, WebSocketSharp.MessageEventArgs e)
+            {
+                if (e.Data.Length != 0)
+                {
+                    string data = e.Data.Substring(0, e.Data.Length);
+                    //data.Split(Convert.ToChar(" "));
+                    string[] splitData = data.Split(Convert.ToChar(" "));
+                    files = new String[splitData.Length, 2];
+                    for (int i = 0; i < files.Length/2; i++)
+                    {
+                        files[i, 0] = splitData[i];
+                    }
+                }
+
+                Handler.MessageHandler.CloseListener(IndexFiles_OnReceive);
+
+                Console.WriteLine("Indexing Files: DONE");
+                CreateFolders();
             }
-
-            Handler.MessageHandler.CloseListener(IndexFiles_OnReceive);
-
-            Console.WriteLine("Indexing Files: DONE");
-            CreateFolders();
         }
 
         public static void CreateFolders()
@@ -81,12 +90,13 @@ namespace Setup
 
             if (files != null)
             {
-                foreach (string file in files)
+                for (int i = 0; i < files.Length/2; i++)
                 {
-                    if (!File.Exists(Misc.Config.fullProjectPath + @"\" + file))
-                        FileMgmt.Manager.CreateFile(Misc.Config.fullProjectPath + @"\" + file);
+                    FileMgmt.Manager.CreateFile(Misc.Config.fullProjectPath + @"\" + files[i, 0]);
                 }
             }
+
+            Console.WriteLine("1");
 
             RequestFileData();
         }
@@ -95,7 +105,7 @@ namespace Setup
         {
             try
             {
-                DataToRunThrough = files.Count();
+                DataToRunThrough = files.Length/2;
             } catch (ArgumentNullException)
             {
                 Misc.Userdata.UserReady = true;
@@ -104,7 +114,7 @@ namespace Setup
                 return;
             }
             DataRanThrough = 0;
-            Misc.Global.connectionSocket.Send($"RequestFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {files[DataRanThrough]}");
+            Misc.Global.connectionSocket.Send($"RequestFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {files[DataRanThrough, 0]}");
             Handler.MessageHandler.AppListener(RequestFileData_OnReceive);
         }
 
@@ -115,44 +125,51 @@ namespace Setup
         {
             if (DataRanThrough < DataToRunThrough)
             {
-                Misc.Global.connectionSocket.Send($"RequestFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {files[DataRanThrough]}");
+                Console.WriteLine("File: " + files[DataRanThrough, 0]);
+                Console.WriteLine("Data: " + e.Data);
                 string progress = DataRanThrough + "/" + DataToRunThrough;
                 Console.WriteLine($"Loading (x/y): {progress}");
-                fileData.Add(e.Data);
+                files[DataRanThrough, 1] = e.Data;
                 DataRanThrough++;
-            } else
-            {
-                Handler.MessageHandler.CloseListener(RequestFileData_OnReceive);
-                Console.WriteLine("Requesting Data: DONE");
-
-                PopulateFiles(files, fileData);
-
-                Console.WriteLine("Populating Files: DONE");
-
-                Console.WriteLine("Creating File Index");
-
-                ActionRunner.Index.IndexFiles(Misc.Config.fullProjectPath);
-
-                Console.WriteLine("Creating File Index: DONE");
-
-                Misc.Userdata.UserReady = true;
-
-                Misc.Expressions.OnFinishedLoading();
+                if (DataRanThrough != DataToRunThrough)
+                    Misc.Global.connectionSocket.Send($"RequestFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {files[DataRanThrough, 0]}");
+                else
+                    FinishLoad();
             }
+        }
+
+        public static void FinishLoad()
+        {
+            Handler.MessageHandler.CloseListener(RequestFileData_OnReceive);
+            Console.WriteLine("Requesting Data: DONE");
+
+            PopulateFiles();
+
+            Console.WriteLine("Populating Files: DONE");
+
+            Console.WriteLine("Creating File Index");
+
+            ActionRunner.Index.IndexFiles(Misc.Config.fullProjectPath);
+
+            Console.WriteLine("Creating File Index: DONE");
+
+            Misc.Userdata.UserReady = true;
+
+            Misc.Expressions.OnFinishedLoading();
         }
 
         public static List<String> fileData = new List<String>();
 
-        public static void PopulateFiles(String[] fileNames, List<String> fileData)
+        public static void PopulateFiles()
         {
             Console.WriteLine("Populating Files");
-            for (int key = 0; key < files.Count(); key++)
+            for (int i = 0; i < files.Length/2; i++)
             {
-                string progress = key + "/" + DataToRunThrough;
-                FileMgmt.Manager.UpdateFile($"{Misc.Config.fullProjectPath}\\{files[key]}", fileData[key]);              
+                string progress = i + "/" + DataToRunThrough;
+                FileMgmt.Manager.UpdateFile($"{Misc.Config.fullProjectPath}\\{files[i, 0]}", files[i, 1]);              
                 Console.WriteLine($"Loading (x/y): {progress}");
-                key++;
             }
+            Console.ReadKey();
         }
     }
 }

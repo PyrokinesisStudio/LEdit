@@ -73,18 +73,18 @@ namespace FileMgmt
                 }
             } else
             {
-                try
-                {
+ /*               try
+                { */
                     using (FileStream fs = new FileStream(file, FileMode.Create))
                     {
                         // Created
                         fs.Close();
                     }
-                } catch
+                /*} catch
                 {
                     Thread.Sleep(250);
                     CreateFile(file);
-                }
+                } */
             }
         }
 

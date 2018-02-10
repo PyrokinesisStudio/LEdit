@@ -56,6 +56,9 @@ namespace ActionRunner
                 Thread.Sleep(150);
             }
 
+            bool ready = true;
+            Thread action;
+
             Console.WriteLine("Change Detected");
 
             // Just saying, the order of this is vital to its functionality
@@ -117,6 +120,10 @@ namespace ActionRunner
                 }
                 foreach (string file in newFiles)
                 {
+                    while (!ready)
+                    {
+                        Thread.Sleep(100);
+                    }
                     string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
                     string newPath = file;
                     if (file.Contains(" "))
@@ -152,7 +159,9 @@ namespace ActionRunner
                     Console.WriteLine("Detected new file: " + file);
                     Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {text}");
                     FileMgmt.Manager.CreateFile(newPath);
-                    Handler.MessageHandler.AppListener(UploadListener);
+
+                    action = new Thread(new ThreadStart(() => { Handler.MessageHandler.AppListener(UploadListener); }));
+                    action.Start();
 
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
                     {
