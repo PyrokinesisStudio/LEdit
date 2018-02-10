@@ -96,8 +96,6 @@ namespace Setup
                 }
             }
 
-            Console.WriteLine("1");
-
             RequestFileData();
         }
 
@@ -125,8 +123,6 @@ namespace Setup
         {
             if (DataRanThrough < DataToRunThrough)
             {
-                Console.WriteLine("File: " + files[DataRanThrough, 0]);
-                Console.WriteLine("Data: " + e.Data);
                 string progress = DataRanThrough + "/" + DataToRunThrough;
                 Console.WriteLine($"Loading (x/y): {progress}");
                 files[DataRanThrough, 1] = e.Data;
@@ -169,7 +165,6 @@ namespace Setup
                 FileMgmt.Manager.UpdateFile($"{Misc.Config.fullProjectPath}\\{files[i, 0]}", files[i, 1]);              
                 Console.WriteLine($"Loading (x/y): {progress}");
             }
-            Console.ReadKey();
         }
     }
 }
