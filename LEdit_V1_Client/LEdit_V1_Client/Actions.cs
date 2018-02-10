@@ -68,6 +68,10 @@ namespace ActionRunner
             {
                 foreach (string folder in newFolders)
                 {
+                    while (!ready)
+                    {
+                        Thread.Sleep(100);
+                    }
                     string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
                     if (folder.Contains(" "))
                     {
@@ -93,9 +97,11 @@ namespace ActionRunner
 
                     Console.WriteLine("Detected new folder: " + folder);
                     Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
-                    Handler.MessageHandler.AppListener(UploadListener);
+                    action = new Thread(new ThreadStart(() => { Handler.MessageHandler.AppListener(UploadListener); }));
+                    action.Start();
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
                     {
+                        ready = false;
                         if (e.Data == "True")
                         {
                             Console.WriteLine("Complete");
@@ -107,6 +113,7 @@ namespace ActionRunner
                             Console.ForegroundColor = ConsoleColor.Green;
                         }
                         Handler.MessageHandler.CloseListener(UploadListener);
+                        ready = true;
                     }
                 }
                 newFolders.Clear();
@@ -165,6 +172,7 @@ namespace ActionRunner
 
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
                     {
+                        ready = false;
                         if (e.Data == "True")
                         {
                             Console.WriteLine("Complete");
@@ -176,6 +184,7 @@ namespace ActionRunner
                             Console.ForegroundColor = ConsoleColor.Green;
                         }
                         Handler.MessageHandler.CloseListener(UploadListener);
+                        ready = true;
                     }
                 }
                 newFiles.Clear();
@@ -185,6 +194,10 @@ namespace ActionRunner
             {
                 foreach (string file in editedFiles)
                 {
+                    while (!ready)
+                    {
+                        Thread.Sleep(100);
+                    }
                     string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
 //                    uploadPath = uploadPath.Replace(" ", "_"); -- shouldn't need this
 
@@ -197,10 +210,12 @@ namespace ActionRunner
 
                     Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath} {data}");
 
-                    Handler.MessageHandler.AppListener(UploadListener);
+                    action = new Thread(new ThreadStart(() => { Handler.MessageHandler.AppListener(UploadListener); }));
+                    action.Start();
 
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
                     {
+                        ready = false;
                         if (e.Data == "True")
                         {
                             Console.WriteLine("Complete");
@@ -211,6 +226,7 @@ namespace ActionRunner
                             Console.ForegroundColor = ConsoleColor.Green;
                         }
                         Handler.MessageHandler.CloseListener(UploadListener);
+                        ready = true;
                     }
                 }
                 editedFiles.Clear();
@@ -220,13 +236,19 @@ namespace ActionRunner
             {
                 foreach (string file in filesToDelete)
                 {
+                    while (!ready)
+                    {
+                        Thread.Sleep(100);
+                    }
                     string uploadPath = file.Substring(file.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
                     Console.WriteLine("Detected deleted file: " + file);
                     Misc.Global.connectionSocket.Send($"DeleteFile {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
-                    Handler.MessageHandler.AppListener(UploadListener);
+                    action = new Thread(new ThreadStart(() => { Handler.MessageHandler.AppListener(UploadListener); }));
+                    action.Start();
 
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
                     {
+                        ready = false;
                         if (e.Data == "True")
                         {
                             Console.WriteLine("Complete");
@@ -238,6 +260,7 @@ namespace ActionRunner
                             Console.ForegroundColor = ConsoleColor.Green;
                         }
                         Handler.MessageHandler.CloseListener(UploadListener);
+                        ready = true;
                     }
                 }
                 filesToDelete.Clear();
@@ -247,13 +270,18 @@ namespace ActionRunner
             {
                 foreach (string folder in foldersToDelete)
                 {
+                    while (!ready)
+                    {
+                        Thread.Sleep(100);
+                    }
                     string uploadPath = folder.Substring(folder.IndexOf(Misc.Config.projectFolder) + Misc.Config.projectFolder.Length + 1);
                     Console.WriteLine("Detected deleted folder: " + folder);
                     Misc.Global.connectionSocket.Send($"DeleteFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {uploadPath}");
-                    Handler.MessageHandler.AppListener(UploadListener);
-
+                    action = new Thread(new ThreadStart(() => { Handler.MessageHandler.AppListener(UploadListener); }));
+                    action.Start();
                     void UploadListener(object sender, WebSocketSharp.MessageEventArgs e)
                     {
+                        ready = false;
                         if (e.Data == "True")
                         {
                             Console.WriteLine("Complete");
@@ -265,11 +293,12 @@ namespace ActionRunner
                             Console.ForegroundColor = ConsoleColor.Green;
                         }
                         Handler.MessageHandler.CloseListener(UploadListener);
+                        ready = true;
                     }
                 }
                 foldersToDelete.Clear();
             }
-
+            
             newFileIndex.Clear();
             newFolderIndex.Clear();
             Index.indexedFileList.Clear();
