@@ -10,6 +10,7 @@ namespace LEdit_V1_Client
     {
         static void Main(string[] args)
         {
+            Console.Title = "LEdit";
             Misc.Global.pauseLiveUpdate = true;
             SocketSetup();
         }
@@ -35,11 +36,7 @@ namespace LEdit_V1_Client
                     Misc.Global.connectionSocket.Send(msg); // Send Message to Server
                     Handler.MessageHandler.UserListener(splitMsg); // Listen for Reply
                 }
-                else if (splitMsg[0] == "Settings")
-                {
-                    Handler.MessageHandler.ClientActions(splitMsg);
-                }
-                else if (splitMsg[0] == "Help")
+                else if (splitMsg[0] == "Help" || splitMsg[0] == "Settings")
                 {
                     Handler.MessageHandler.ClientActions(splitMsg);
                 }
@@ -50,7 +47,7 @@ namespace LEdit_V1_Client
                 else
                 {
                     // Allows for control of message receiving
-                    Handler.MessageHandler.ClientActions(splitMsg); 
+                    Handler.MessageHandler.ClientActions(splitMsg);
                 }
             }
         }

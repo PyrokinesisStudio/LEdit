@@ -13,7 +13,6 @@ namespace ActionRunner
 
     public class Index
     {
-        bool indexing = false;
         public static List<IndexedFiles> indexedFileList = new List<IndexedFiles>();
         public static List<String> indexedDirectoriesList = new List<String>();
 

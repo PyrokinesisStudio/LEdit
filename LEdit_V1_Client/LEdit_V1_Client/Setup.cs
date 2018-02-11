@@ -104,7 +104,7 @@ namespace Setup
             try
             {
                 DataToRunThrough = files.Length/2;
-            } catch (ArgumentNullException)
+            } catch
             {
                 Misc.Userdata.UserReady = true;
 
