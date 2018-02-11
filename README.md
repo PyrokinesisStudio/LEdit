@@ -1,4 +1,4 @@
-<h1>LEdit (VA)<h1>
+<h1>LEdit (BETA)<h1>
 
 <hr />
 <h3>Version Information: VB 1.2 | S3</h3>
