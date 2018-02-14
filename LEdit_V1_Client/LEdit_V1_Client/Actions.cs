@@ -11,7 +11,6 @@ namespace Watcher
         public static void ConfigureWatch()
         {
             string dir = Misc.Config.fullProjectPath;
-            // Create a new FileSystemWatcher and set its properties.
             FileSystemWatcher watcher = new FileSystemWatcher();
             watcher.Path = dir;
             watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
@@ -26,7 +25,7 @@ namespace Watcher
 
         public static List<String> ignore = new List<String>();
 
-        // Define the event handlers.
+        // Define the event handlers
         private static void OnChanged(object src, FileSystemEventArgs e)
         {
             for (int i = 0; i < ignore.Count; i++)
@@ -79,9 +78,38 @@ namespace Watcher
                 if (path.Contains(" "))
                 {
                     path = path.Replace(' ', '_');
-                    ignore.Add(Misc.Config.fullProjectPath + "\\" + path);
                     ignore.Add(e.FullPath);
-                    FileMgmt.Manager.RenameFile(e.FullPath, Misc.Config.fullProjectPath + "\\" + path);
+
+                    string uploadPath = Misc.Config.fullProjectPath + "\\" + path;
+                    string uploadPathHolder = uploadPath;
+                    string extension = Path.GetExtension(uploadPath);
+                    int num = 0;
+                    
+                    while (File.Exists(uploadPathHolder))
+                    {
+                        num++;
+                        uploadPathHolder = uploadPath.Substring(0, uploadPath.IndexOf(extension));
+                        uploadPathHolder = uploadPathHolder + "_[" + num + "]" + extension;
+                    }
+                    uploadPath = uploadPathHolder;
+                    ignore.Add(uploadPath);
+                    FileMgmt.Manager.RenameFile(e.FullPath, uploadPath);
+                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+                } else
+                {
+                    string uploadPath = Misc.Config.fullProjectPath + "\\" + path;
+                    string uploadPathHolder = uploadPath;
+                    string extension = Path.GetExtension(uploadPath);
+                    int num = 0;
+
+                    while (File.Exists(uploadPathHolder))
+                    {
+                        num++;
+                        uploadPathHolder = uploadPath.Substring(0, uploadPath.IndexOf(extension));
+                        uploadPathHolder = uploadPathHolder + "_[" + num + "]" + extension;
+                    }
+                    uploadPath = uploadPathHolder;
+                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
                 }
                 string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + "\\" + path);
                 if (data == "" || data == null)
@@ -110,8 +138,30 @@ namespace Watcher
                 if (path.Contains(" "))
                 {
                     path = path.Replace(' ', '_');
-                    ignore.Add(Misc.Config.fullProjectPath + "\\" + path);
-                    FileMgmt.Manager.RenameFolder(e.FullPath, Misc.Config.fullProjectPath + "\\" + path);
+                    string uploadPath = Misc.Config.fullProjectPath + "\\" + path;
+                    string uploadPathHolder = uploadPath;
+                    int num = 0;
+                    while (Directory.Exists(uploadPathHolder))
+                    {
+                        num++;
+                        uploadPathHolder = uploadPath + "_[" + num + "]";
+                    }
+                    uploadPath = uploadPathHolder;
+                    ignore.Add(uploadPath);
+                    FileMgmt.Manager.RenameFolder(e.FullPath, uploadPath);
+                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+                } else
+                {
+                    string uploadPath = Misc.Config.fullProjectPath + "\\" + path;
+                    string uploadPathHolder = uploadPath;
+                    int num = 0;
+                    while (Directory.Exists(uploadPathHolder))
+                    {
+                        num++;
+                        uploadPathHolder = uploadPath + "_[" + num + "]";
+                    }
+                    uploadPath = uploadPathHolder;
+                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
                 }
                 Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {path}");
                 Handler.MessageHandler.AppListener(UploadListener);
@@ -259,4 +309,3 @@ namespace Watcher
         }
     }
 }
-
