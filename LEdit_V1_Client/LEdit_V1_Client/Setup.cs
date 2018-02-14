@@ -145,7 +145,7 @@ namespace Setup
 
             Console.WriteLine("Creating File Index");
 
-            ActionRunner.Index.IndexFiles(Misc.Config.fullProjectPath);
+            //ActionRunner.Index.IndexFiles(Misc.Config.fullProjectPath);
 
             Console.WriteLine("Creating File Index: DONE");
 

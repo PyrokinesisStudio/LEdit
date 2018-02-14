@@ -7,6 +7,19 @@ namespace FileMgmt
 {
     class Manager
     {
+        public static void RenameFile(string oldPath, string newPath)
+        {
+            string data = ReadFile(oldPath);
+            CreateAndPopulateFile(newPath, data);
+            DeleteFile(oldPath);
+        }
+
+        public static void RenameFolder(string oldPath, string newPath)
+        {
+            CreateDirectory(newPath);
+            DeleteDirectory(oldPath);
+        }
+
         public static bool FileExists(string fileToCheck)
         {
             return File.Exists(fileToCheck);
@@ -54,7 +67,7 @@ namespace FileMgmt
             }
             return false;
         }
-        
+
         public static void CreateFile(string file)
         {
             if (File.Exists(file))
@@ -66,25 +79,27 @@ namespace FileMgmt
                         // Truncated
                         fs.Close();
                     }
-                } catch
+                }
+                catch
                 {
                     Thread.Sleep(250);
                     CreateFile(file);
                 }
             } else
             {
- /*               try
-                { */
+                try
+                {
                     using (FileStream fs = new FileStream(file, FileMode.Create))
                     {
                         // Created
                         fs.Close();
                     }
-                /*} catch
+                }
+                catch
                 {
                     Thread.Sleep(250);
                     CreateFile(file);
-                } */
+                }
             }
         }
 
@@ -131,7 +146,8 @@ namespace FileMgmt
                     }
                     fs.Close();
                 }
-            } catch
+            }
+            catch
             {
                 Thread.Sleep(250);
                 UpdateFile(file, data);
@@ -147,8 +163,8 @@ namespace FileMgmt
                 Thread.Sleep(100);
             }
             string data = "None";
-            try
-            {
+//            try
+//            {
                 using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
                 {
                     using (StreamReader sr = new StreamReader(fs))
@@ -158,43 +174,13 @@ namespace FileMgmt
                     }
                     fs.Close();
                 }
-            } catch
+/*            }
+            catch
             {
                 Thread.Sleep(250);
                 ReadFile(file);
-            }
+            } */
             return data;
-        }
-
-        public static byte[] CheckFileHash(string fileToCheck)
-        {
-            // Wait for file to become available
-            while (!Checker.FileAvailable(fileToCheck))
-            {
-                Thread.Sleep(100);
-            }
-            try
-            {
-                if (File.Exists(fileToCheck))
-                {
-                    byte[] hash = null;
-                    using (FileStream fs = new FileStream(fileToCheck, FileMode.Open, FileAccess.Read))
-                    {
-                        SHA1 sha = new SHA1CryptoServiceProvider();
-                        hash = sha.ComputeHash(fs);
-                        fs.Close();
-                    }
-                    return hash;
-                }
-            }
-            catch (IOException)
-            {
-                Thread.Sleep(250);
-                CheckFileHash(fileToCheck);
-            }
-
-            // Shouldn't get here generally
-            return null;
         }
     }
 

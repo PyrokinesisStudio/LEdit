@@ -6,7 +6,7 @@ namespace L
     {
         public static void ChangeListener(object sender, WebSocketSharp.MessageEventArgs e)
         {
-            String[] dataParams = e.Data.Split(' ');
+/*            String[] dataParams = e.Data.Split(' ');
             switch (dataParams[0])
             {
                 // TO DO
@@ -89,7 +89,7 @@ namespace L
                         Console.WriteLine("Folder Deletion");
                     }
                     break;
-            }
+            } */
         }
-    }
+    } 
 }
