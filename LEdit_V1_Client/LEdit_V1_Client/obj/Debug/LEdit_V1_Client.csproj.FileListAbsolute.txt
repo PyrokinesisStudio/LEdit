@@ -18,3 +18,4 @@ C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\bin\Debug\
 C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\bin\Debug\LEdit_V1_Client.application
 C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\obj\Debug\LEdit_V1_Client.exe.manifest
 C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\obj\Debug\LEdit_V1_Client.application
+C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\obj\Debug\LEdit_V1_Client.csprojResolveAssemblyReference.cache
