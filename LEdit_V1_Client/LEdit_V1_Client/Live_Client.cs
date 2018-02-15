@@ -9,7 +9,6 @@ namespace L
             String[] dataParams = e.Data.Split(' ');
             switch (dataParams[0])
             {
-                // TO DO
                 case "RefreshFile":
                     string file = dataParams[1];
                     string fileToModify = Misc.Config.fullProjectPath + @"\" + file;
@@ -18,8 +17,8 @@ namespace L
                     {
                         Watcher.Watcher.ignore.Add(fileToModify);
                         FileMgmt.Manager.UpdateFile(fileToModify, data);
+                        Console.WriteLine("File Refresh");
                     }
-                    Console.WriteLine("File Refresh");
                     break;
                 case "CreateFile":
                     string fileToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[1];
