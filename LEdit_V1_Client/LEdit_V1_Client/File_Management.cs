@@ -155,6 +155,7 @@ namespace FileMgmt
             return true;
         }
 
+        static int count = 0;
         public static string ReadFile(string file)
         {
             // Wait for file to become available
@@ -163,8 +164,8 @@ namespace FileMgmt
                 Thread.Sleep(100);
             }
             string data = "None";
-//            try
-//            {
+            try
+            {
                 using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
                 {
                     using (StreamReader sr = new StreamReader(fs))
@@ -174,12 +175,20 @@ namespace FileMgmt
                     }
                     fs.Close();
                 }
-/*            }
+            }
             catch
             {
                 Thread.Sleep(250);
-                ReadFile(file);
-            } */
+                if (count < 30)
+                {
+                    count++;
+                    ReadFile(file);
+                } else
+                {
+                    count = 0;
+                    return null;
+                }
+            }
             return data;
         }
     }

@@ -38,29 +38,32 @@ namespace Watcher
                 }
             }
             string path = e.FullPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
-            // Continue
-            string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + "\\" + path);
-            if (data == "" || data == null)
+            if (path.Contains("."))
             {
-                data = "// This file is empty";
-            }
-            Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {data}");
-            Handler.MessageHandler.AppListener(UploadListener);
-            void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
-            {
-                if (ee.Data == "True")
+                // Continue
+                string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + "\\" + path);
+                if (data == "" || data == null)
                 {
-                    Console.WriteLine("Complete");
+                    data = "// This file is empty";
                 }
-                else
+                Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {data}");
+                Handler.MessageHandler.AppListener(UploadListener);
+                void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Failed (1) file transfer: " + ee.Data);
-                    Console.ForegroundColor = ConsoleColor.Green;
+                    if (ee.Data == "True")
+                    {
+                        Console.WriteLine("Complete");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    Handler.MessageHandler.CloseListener(UploadListener);
                 }
-                Handler.MessageHandler.CloseListener(UploadListener);
+                Console.WriteLine("File " + e.FullPath + " has been modified");
             }
-            Console.WriteLine("File/Folder " + e.FullPath + " has been modified");
         }
 
         private static void OnCreated(object src, FileSystemEventArgs e)

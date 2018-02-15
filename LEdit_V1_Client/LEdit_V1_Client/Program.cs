@@ -31,9 +31,12 @@ namespace LEdit_V1_Client
 
                 if (splitMsg[0] == "RunLogin")
                 {
-                    // Directly sends message and listens for a response
-                    Misc.Global.connectionSocket.Send(msg); // Send Message to Server
-                    Handler.MessageHandler.UserListener(splitMsg); // Listen for Reply
+                    if (Misc.Userdata.Username == null)
+                    {
+                        // Directly sends message and listens for a response
+                        Misc.Global.connectionSocket.Send(msg); // Send Message to Server
+                        Handler.MessageHandler.UserListener(splitMsg); // Listen for Reply
+                    }
                 }
                 else if (splitMsg[0] == "Help" || splitMsg[0] == "Settings")
                 {
