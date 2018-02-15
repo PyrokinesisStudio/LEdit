@@ -11,7 +11,6 @@ namespace LEdit_V1_Client
         static void Main(string[] args)
         {
             Console.Title = "LEdit";
-            Misc.Global.pauseLiveUpdate = true;
             SocketSetup();
         }
 

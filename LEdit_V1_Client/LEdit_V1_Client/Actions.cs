@@ -21,6 +21,7 @@ namespace Watcher
             watcher.Renamed += new RenamedEventHandler(OnRenamed);
 
             watcher.EnableRaisingEvents = true;
+            watcher.IncludeSubdirectories = true;
         }
 
         public static List<String> ignore = new List<String>();
@@ -36,10 +37,14 @@ namespace Watcher
                     return;
                 }
             }
-
             string path = e.FullPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
             // Continue
-            Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {FileMgmt.Manager.ReadFile(e.FullPath)}");
+            string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + "\\" + path);
+            if (data == "" || data == null)
+            {
+                data = "// This file is empty";
+            }
+            Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {data}");
             Handler.MessageHandler.AppListener(UploadListener);
             void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
             {
@@ -60,7 +65,6 @@ namespace Watcher
 
         private static void OnCreated(object src, FileSystemEventArgs e)
         {
-            Console.WriteLine("File/Folder " + e.FullPath + " has been deleted");
             for (int i = 0; i < ignore.Count; i++)
             {
                 if (ignore[i] == e.FullPath)
@@ -93,24 +97,10 @@ namespace Watcher
                     }
                     uploadPath = uploadPathHolder;
                     ignore.Add(uploadPath);
-                    FileMgmt.Manager.RenameFile(e.FullPath, uploadPath);
                     path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
-                } else
-                {
-                    string uploadPath = Misc.Config.fullProjectPath + "\\" + path;
-                    string uploadPathHolder = uploadPath;
-                    string extension = Path.GetExtension(uploadPath);
-                    int num = 0;
-
-                    while (File.Exists(uploadPathHolder))
-                    {
-                        num++;
-                        uploadPathHolder = uploadPath.Substring(0, uploadPath.IndexOf(extension));
-                        uploadPathHolder = uploadPathHolder + "_[" + num + "]" + extension;
-                    }
-                    uploadPath = uploadPathHolder;
-                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+                    FileMgmt.Manager.RenameFile(e.FullPath, Misc.Config.fullProjectPath + "\\" + path);
                 }
+
                 string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + "\\" + path);
                 if (data == "" || data == null)
                 {
@@ -150,19 +140,8 @@ namespace Watcher
                     ignore.Add(uploadPath);
                     FileMgmt.Manager.RenameFolder(e.FullPath, uploadPath);
                     path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
-                } else
-                {
-                    string uploadPath = Misc.Config.fullProjectPath + "\\" + path;
-                    string uploadPathHolder = uploadPath;
-                    int num = 0;
-                    while (Directory.Exists(uploadPathHolder))
-                    {
-                        num++;
-                        uploadPathHolder = uploadPath + "_[" + num + "]";
-                    }
-                    uploadPath = uploadPathHolder;
-                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
                 }
+
                 Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {path}");
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
