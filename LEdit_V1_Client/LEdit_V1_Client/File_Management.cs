@@ -137,7 +137,7 @@ namespace FileMgmt
             // Continue
             try
             {
-                using (FileStream fs = new FileStream(file, FileMode.Open))
+                using (FileStream fs = new FileStream(file, FileMode.Truncate))
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
