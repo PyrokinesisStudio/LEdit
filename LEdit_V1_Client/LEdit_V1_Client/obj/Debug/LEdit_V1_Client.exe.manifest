@@ -49,7 +49,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>VtrmsVfkHTdlRM+wdXKSqzmYA2V1ZXx92nQpYktpjYQ=</dsig:DigestValue>
+        <dsig:DigestValue>Q4PENK8lip7EKmDL4q8L1nVUwo9gQxdaZFM57c5cbzE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -65,13 +65,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="LEdit_V1_Client.exe.config" size="334">
+  <file name="LEdit_V1_Client.exe.config" size="345">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>xl1ytWwwG/7gfHgPQxD72wxUK0lEy47VnEsjaRjuBCs=</dsig:DigestValue>
+      <dsig:DigestValue>4II3LXnwfJXnBTKz7X6kxdbW9isB4kyD+shFlrovUow=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

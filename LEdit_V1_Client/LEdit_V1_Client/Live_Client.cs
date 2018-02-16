@@ -16,6 +16,7 @@ namespace L
                     if (Misc.Userdata.Username != dataParams[2])
                     {
                         Watcher.Watcher.ignore.Add(fileToModify);
+                        Watcher.Watcher.ignore.Add(fileToModify);
                         FileMgmt.Manager.UpdateFile(fileToModify, data);
                         Console.WriteLine("File Refresh");
                     }
