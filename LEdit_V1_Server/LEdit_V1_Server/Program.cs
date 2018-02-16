@@ -41,28 +41,28 @@ namespace LEdit_V1_Server
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
                     status = ActionRunner.RunFileUpdate(dataParams, dataParams[3], data);
                     Send(status);
-                    Sessions.Broadcast($"RefreshFile {dataParams[3]} {data}");
+                    Sessions.Broadcast($"RefreshFile {dataParams[3]} {dataParams[1]} {data}");
                     break;
                 case "CreateNewFile":
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
                     status = ActionRunner.RunFileUpload(dataParams, dataParams[3], data);
                     Send(status);
-                    Sessions.Broadcast($"CreateFile {dataParams[3]}");
+                    Sessions.Broadcast($"CreateFile {dataParams[1]} {dataParams[3]}");
                     break;
                 case "DeleteFile":
                     status = ActionRunner.RunFileDeleter(dataParams);
                     Send(status);
-                    Sessions.Broadcast($"DeleteFile {dataParams[3]}");
+                    Sessions.Broadcast($"DeleteFile {dataParams[1]} {dataParams[3]}");
                     break;
                 case "CreateNewFolder":
                     status = ActionRunner.RunFolderCreator(dataParams);
                     Send(status);
-                    Sessions.Broadcast($"CreateFolder {dataParams[3]}");
+                    Sessions.Broadcast($"CreateFolder {dataParams[1]} {dataParams[3]}");
                     break;
                 case "DeleteFolder":
                     status = ActionRunner.RunFolderDeleter(dataParams);
                     Send(status);
-                    Sessions.Broadcast($"DeleteFolder {dataParams[3]}");
+                    Sessions.Broadcast($"DeleteFolder {dataParams[1]} {dataParams[3]}");
                     break;
                 case "RunLoginUC":
                     if (ActionRunner.RunLoginUAC(dataParams)) {
@@ -430,7 +430,7 @@ namespace Settings
     // you can edit the "127.0.0.1" but nothing else on that line
     public class Socket_Config
     {
-        public static string ip_addr = "127.0.0.1"; // The server IP address
+        public static string ip_addr = "176.31.102.221"; // The server IP address
         public static int port = 90; // The server port (please note you might have to add an exception for incoming traffic on Windows Firewall)
     }
 

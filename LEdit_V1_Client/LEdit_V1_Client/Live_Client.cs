@@ -12,8 +12,8 @@ namespace L
                 case "RefreshFile":
                     string file = dataParams[1];
                     string fileToModify = Misc.Config.fullProjectPath + @"\" + file;
-                    string data = e.Data.Substring(e.Data.IndexOf(dataParams[2]));
-                    if (FileMgmt.Manager.ReadFile(fileToModify) != data)
+                    string data = e.Data.Substring(e.Data.IndexOf(dataParams[3]));
+                    if (Misc.Userdata.Username != dataParams[2])
                     {
                         Watcher.Watcher.ignore.Add(fileToModify);
                         FileMgmt.Manager.UpdateFile(fileToModify, data);
@@ -21,8 +21,8 @@ namespace L
                     }
                     break;
                 case "CreateFile":
-                    string fileToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[1];
-                    if (!FileMgmt.Manager.FileExists(fileToCreate))
+                    string fileToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[2];
+                    if (!FileMgmt.Manager.FileExists(fileToCreate) || Misc.Userdata.Username != dataParams[1])
                     {
                         Watcher.Watcher.ignore.Add(fileToCreate);
                         FileMgmt.Manager.CreateFile(fileToCreate);
@@ -30,8 +30,8 @@ namespace L
                     }
                     break;
                 case "CreateFolder":
-                    string folderToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[1];
-                    if (!FileMgmt.Manager.DirExists(folderToCreate))
+                    string folderToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[2];
+                    if (!FileMgmt.Manager.DirExists(folderToCreate) || Misc.Userdata.Username != dataParams[1])
                     {
                         Watcher.Watcher.ignore.Add(folderToCreate);
                         FileMgmt.Manager.CreateDirectory(folderToCreate);
@@ -39,8 +39,8 @@ namespace L
                     }
                     break;
                 case "DeleteFile":
-                    string fileToRemove = Misc.Config.fullProjectPath + @"\" + dataParams[1];
-                    if (FileMgmt.Manager.FileExists(fileToRemove))
+                    string fileToRemove = Misc.Config.fullProjectPath + @"\" + dataParams[2];
+                    if (FileMgmt.Manager.FileExists(fileToRemove) || Misc.Userdata.Username != dataParams[1])
                     {
                         Watcher.Watcher.ignore.Add(fileToRemove);
                         FileMgmt.Manager.DeleteFile(fileToRemove);
@@ -48,8 +48,8 @@ namespace L
                     }
                     break;
                 case "DeleteFolder":
-                    string folderToRemove = Misc.Config.fullProjectPath + @"\" + dataParams[1];
-                    if (FileMgmt.Manager.DirExists(folderToRemove))
+                    string folderToRemove = Misc.Config.fullProjectPath + @"\" + dataParams[2];
+                    if (FileMgmt.Manager.DirExists(folderToRemove) || Misc.Userdata.Username != dataParams[1])
                     {
                         Watcher.Watcher.ignore.Add(folderToRemove);
                         FileMgmt.Manager.DeleteDirectory(folderToRemove);

@@ -100,6 +100,7 @@ namespace Watcher
                     }
                     uploadPath = uploadPathHolder;
                     ignore.Add(uploadPath);
+                    ignore.Add(e.FullPath);
                     path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
                     FileMgmt.Manager.RenameFile(e.FullPath, Misc.Config.fullProjectPath + "\\" + path);
                 }
