@@ -4,7 +4,7 @@ using WebSocketSharp;
 using WebSocketSharp.Server;
 using CryptSharp;
 using System.Collections.Specialized;
-using SevenZip;
+using System.Threading.Tasks;
 
 namespace LEdit_V1_Server
 {
@@ -40,31 +40,64 @@ namespace LEdit_V1_Server
                     break;
                 case "UploadFileData":
                     string bytes = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
-                    string str = Other.MiscFunctions.StringDecompressBytes(bytes);
-                    status = ActionRunner.RunFileUpdate(dataParams, dataParams[3], str);
-                    Send(status);
-                    Sessions.Broadcast($"RefreshFile {dataParams[3]} {dataParams[1]} {bytes}"); 
+                    Task.Factory.StartNew(() => {
+                        string str = Other.MiscFunctions.StringDecompressBytes(bytes);
+                        status = ActionRunner.RunFileUpdate(dataParams, dataParams[3], str);
+                        Send(status);
+                    });
+
+                    Task.Factory.StartNew(() => {
+                        Sessions.Broadcast($"RefreshFile {dataParams[3]} {dataParams[1]} {bytes}");
+                    });
                     break;
                 case "CreateNewFile":
                     data = e.Data.Substring(e.Data.IndexOf(dataParams[4]));
-                    status = ActionRunner.RunFileUpload(dataParams, dataParams[3], data);
-                    Send(status);
-                    Sessions.Broadcast($"CreateFile {dataParams[1]} {dataParams[3]} {data}");
+                    Task.Factory.StartNew(() =>
+                    {
+                        status = ActionRunner.RunFileUpload(dataParams, dataParams[3], data);
+                        Send(status);
+                    });
+
+                    Task.Factory.StartNew(() =>
+                    {
+                        Sessions.Broadcast($"CreateFile {dataParams[1]} {dataParams[3]} {data}");
+                    });
                     break;
                 case "DeleteFile":
-                    status = ActionRunner.RunFileDeleter(dataParams);
-                    Send(status);
-                    Sessions.Broadcast($"DeleteFile {dataParams[1]} {dataParams[3]}");
+                    Task.Factory.StartNew(() =>
+                    {
+                        status = ActionRunner.RunFileDeleter(dataParams);
+                        Send(status);
+                    });
+
+                    Task.Factory.StartNew(() =>
+                    {
+                        Sessions.Broadcast($"DeleteFile {dataParams[1]} {dataParams[3]}");
+                    });
                     break;
                 case "CreateNewFolder":
-                    status = ActionRunner.RunFolderCreator(dataParams);
-                    Send(status);
-                    Sessions.Broadcast($"CreateFolder {dataParams[1]} {dataParams[3]}");
+                    Task.Factory.StartNew(() =>
+                    {
+                        status = ActionRunner.RunFolderCreator(dataParams);
+                        Send(status);
+                    });
+
+                    Task.Factory.StartNew(() =>
+                    {
+                        Sessions.Broadcast($"CreateFolder {dataParams[1]} {dataParams[3]}");
+                    });
                     break;
                 case "DeleteFolder":
-                    status = ActionRunner.RunFolderDeleter(dataParams);
-                    Send(status);
-                    Sessions.Broadcast($"DeleteFolder {dataParams[1]} {dataParams[3]}");
+                    Task.Factory.StartNew(() =>
+                    {
+                        status = ActionRunner.RunFolderDeleter(dataParams);
+                        Send(status);
+                    });
+
+                    Task.Factory.StartNew(() =>
+                    {
+                        Sessions.Broadcast($"DeleteFolder {dataParams[1]} {dataParams[3]}");
+                    });
                     break;
                 case "RunLoginUC":
                     if (ActionRunner.RunLoginUAC(dataParams)) {
