@@ -45,6 +45,7 @@ namespace LEdit_V1_Client
                 }
                 else if (splitMsg[0] == "Reconnect")
                 {
+                    Misc.Global.connectionSocket.Close();
                     SocketSetup();
                 }
                 else
@@ -61,7 +62,7 @@ namespace Misc
 {
     public class Config
     {
-        public static IPAddress ip = IPAddress.Parse("127.0.0.1");
+        public static IPAddress ip = IPAddress.Parse("176.31.102.221");
         public static int port = 90;
         public static string projectFolder = "sp";
         public static string fullProjectPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{projectFolder}";

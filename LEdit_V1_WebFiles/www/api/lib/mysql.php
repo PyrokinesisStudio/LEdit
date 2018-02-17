@@ -119,9 +119,27 @@ class MySQL {
     }
     function DeleteFolder($folder, $username) {
         require "connect.php";
-        $q1 = $conn->prepare("DELETE FROM folders WHERE folder=:folder");
-        $q1->bindParam(":folder", $folder);
-        $q1->execute();
+        $q0 = $conn->prepare("SELECT * FROM folders");
+        $q0->execute();
+
+        while ($r = $q0->fetch(PDO::FETCH_ASSOC)) {
+            if (strpos($r['folder'], $folder) !== FALSE) {
+                $q1 = $conn->prepare("DELETE FROM folders WHERE id=:id");
+                $q1->bindParam(":id", $r['id']);
+                $q1->execute();
+            }
+        }
+
+        $q01 = $conn->prepare("SELECT * FROM files");
+        $q01->execute();
+
+        while ($r = $q01->fetch(PDO::FETCH_ASSOC)) {
+            if (strpos($r['file'], $folder) !== FALSE) {
+                $q1 = $conn->prepare("DELETE FROM files WHERE id=:id");
+                $q1->bindParam(":id", $r['id']);
+                $q1->execute();
+            }
+        }
 
         $q2 = $conn->prepare('INSERT INTO tracker (id, user, ip, file, data) VALUES (NULL, :usern, "none", :folder, "FOLDER DELETE")');
         $q2->bindParam(":usern", $username);

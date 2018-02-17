@@ -431,7 +431,7 @@ namespace Settings
     // you can edit the "127.0.0.1" but nothing else on that line
     public class Socket_Config
     {
-        public static string ip_addr = "127.0.0.1"; // The server IP address
+        public static string ip_addr = "176.31.102.221"; // The server IP address
         public static int port = 90; // The server port (please note you might have to add an exception for incoming traffic on Windows Firewall)
     }
 

@@ -32,6 +32,11 @@ switch ($action) {
 		$ms = new MySQL;
 		$ms->GetFileData($_GET['file']);
 		break;
+	case "CheckRank":
+		require_once "lib/mysql.php";
+		$ms = new MySQL;
+		$ms->CheckRank($_GET['user']);
+		break;
 	////////////////////////////////////////
 	case "UploadFileData":
 		require_once "lib/dual_handler.php";
