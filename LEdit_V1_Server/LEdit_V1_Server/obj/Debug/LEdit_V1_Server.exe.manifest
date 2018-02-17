@@ -54,14 +54,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Server.exe" size="13280">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Server.exe" size="13792">
       <assemblyIdentity name="LEdit_V1_Server" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>qQYsVNiXIHXJoOBaMkTR1dbFZqHJicVRljJy6rM0U1U=</dsig:DigestValue>
+        <dsig:DigestValue>4ruvRa+exTpI8956aSUjVRP0URZdegbAZeE+MrpoUuk=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SevenZipSharp.dll" size="151040">
+      <assemblyIdentity name="SevenZipSharp" version="0.64.3890.29348" publicKeyToken="20DE82C62B055C88" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>SShLMfKNCmLXl8/PF/RkyMKyKynQ6Kt8FclHJNg+WVw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

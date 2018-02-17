@@ -3,6 +3,7 @@ using WebSocketSharp;
 using System.Threading;
 using System.Configuration;
 using System.Net;
+using SevenZip;
 
 namespace LEdit_V1_Client
 {
@@ -18,7 +19,7 @@ namespace LEdit_V1_Client
         {
             Misc.Global.connectionSocket = new WebSocket($"ws://{Misc.Config.ip}:{Misc.Config.port}/LE");
             Misc.Global.connectionSocket.Connect();
-
+            Misc.Global.connectionSocket.Compression = WebSocketSharp.CompressionMethod.Deflate;
             Handler.MessageHandler.AppListener(L.Change.ChangeListener);
 
             while (true)
@@ -60,7 +61,7 @@ namespace Misc
 {
     public class Config
     {
-        public static IPAddress ip = IPAddress.Parse("176.31.102.221");
+        public static IPAddress ip = IPAddress.Parse("127.0.0.1");
         public static int port = 90;
         public static string projectFolder = "sp";
         public static string fullProjectPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{projectFolder}";

@@ -12,20 +12,23 @@ namespace L
                 case "RefreshFile":
                     string file = dataParams[1];
                     string fileToModify = Misc.Config.fullProjectPath + @"\" + file;
-                    string data = e.Data.Substring(e.Data.IndexOf(dataParams[3]));
+                    string bytes = e.Data.Substring(e.Data.IndexOf(dataParams[3]));
                     if (Misc.Userdata.Username != dataParams[2])
                     {
                         Watcher.Watcher.ignore.Add(fileToModify);
-                        FileMgmt.Manager.UpdateFile(fileToModify, data);
+                        string str = Other.MiscFunctions.StringDecompressBytes(bytes);
+                        FileMgmt.Manager.UpdateFile(fileToModify, str);
                         Console.WriteLine("File Refresh");
                     }
                     break;
                 case "CreateFile":
                     string fileToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[2];
-                    if (!FileMgmt.Manager.FileExists(fileToCreate) || Misc.Userdata.Username != dataParams[1])
+                    string bys = e.Data.Substring(e.Data.IndexOf(dataParams[3]));
+                    if (FileMgmt.Manager.FileExists(fileToCreate) || Misc.Userdata.Username == dataParams[1])
                     {
                         Watcher.Watcher.ignore.Add(fileToCreate);
-                        FileMgmt.Manager.CreateFile(fileToCreate);
+                        string str = Other.MiscFunctions.StringDecompressBytes(bys);
+                        FileMgmt.Manager.CreateAndPopulateFile(fileToCreate, str);
                         Console.WriteLine("New File Addition");
                     }
                     break;

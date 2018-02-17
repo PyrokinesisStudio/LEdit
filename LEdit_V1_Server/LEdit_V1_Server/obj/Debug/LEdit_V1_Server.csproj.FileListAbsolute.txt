@@ -31,3 +31,4 @@ C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\
 C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.application
 C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.exe
 C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Server\LEdit_V1_Server\obj\Debug\LEdit_V1_Server.pdb
+C:\Users\AnujB\Documents\GitHub\LEdit\LEdit_V1_Server\LEdit_V1_Server\bin\Debug\SevenZipSharp.dll

@@ -7,14 +7,14 @@
     <framework targetVersion="4.5.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="LEdit_V1_Server.exe.manifest" size="4821">
+    <dependentAssembly dependencyType="install" codebase="LEdit_V1_Server.exe.manifest" size="5508">
       <assemblyIdentity name="LEdit_V1_Server.exe" version="1.0.0.8" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>IDccAvcGJy/DgFoPtZsMgQksdH6/856Zb5MymzQuHVY=</dsig:DigestValue>
+        <dsig:DigestValue>wuZQRFllQ7I5bHpiK65rCB4B0qsYn7CJUwsabCWuFVE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

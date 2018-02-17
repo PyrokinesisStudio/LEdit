@@ -46,7 +46,8 @@ namespace Watcher
                 {
                     data = "// This file is empty";
                 }
-                Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {data}");
+                string bytes = Other.MiscFunctions.StringCompressBytes(data);
+                Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {bytes}");
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
@@ -63,9 +64,10 @@ namespace Watcher
                     Handler.MessageHandler.CloseListener(UploadListener);
                 }
                 Console.WriteLine("File " + e.FullPath + " has been modified");
+                ignore.Add(e.FullPath);
             }
         }
-
+ 
         private static void OnCreated(object src, FileSystemEventArgs e)
         {
             for (int i = 0; i < ignore.Count; i++)
@@ -110,7 +112,8 @@ namespace Watcher
                 {
                     data = "// This file is empty";
                 }
-                Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {data}");
+                string bytes = Other.MiscFunctions.StringCompressBytes(data);
+                Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {bytes}");
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
