@@ -1,9 +1,8 @@
 <h1>LEdit (BETA)<h1>
 
 <hr />
-<h3>Version Information: VB 1.4B | S3</h3>
+<h3>Version Information: VB 1.6.1 | S3</h3>
 <h3>BETA</h3>
-<h3>LIVE CHANGES ARE TEMPORARILY DISABLED DUE TO A MAJOR OVERHAUL OF A CRUCIAL FILE</h3>
 I haven't created a user account creator, so if you'd like to create one, it uses BCrypt (if you want to use .NET I recommend the CryptSharp library), you can create a web one very easily in PHP.
 I will probably create one relatively soon, so bare with me please :3
 <hr />
@@ -17,6 +16,10 @@ Visual Studio Code
 Sublime Text
  -> Alerts you when a change has been made to an open file
  -> No comparison feature to compare with other versions of the file
+ 
+ <h3>IMPORTANT: Live Changes</h3>
+ To enable live changes, open your IDE settings and enable autosave.
+ Now for the delay, we personally recommend a delay of <b>250ms</b> as that syncs roughly every word (according to our tests, however it would be dependant on your typing) and therefore there would be less sync delay, if you reduce the auto save delay beyond our limit, it's very possible that it could increase the delay for it reaching the server and therefore increase the delay for your other developers to get the changes and can thus be counter-productive. We are trying to speed everything up so people can reduce the delay further, but to be perfectly honest, 250ms is fine.
 
 <h3>Bugs!</h3>
 We would <b>REALLY</b> appreciate it if you guys alerted us immediately about any bugs and it would help tremendously if you guys could tell us accurately how you came to this bug
