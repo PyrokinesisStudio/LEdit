@@ -34,5 +34,14 @@ namespace Other
             string str = Encoding.UTF8.GetString(SevenZipExtractor.ExtractBytes(restoredBytes));
             return str;
         }
+
+        public static bool LiveClientResponse(string data)
+        {
+            if (data.Contains("RefreshFile") || data.Contains("CreateFile") || data.Contains("CreateFolder") || data.Contains("DeleteFile") || data.Contains("DeleteFolder"))
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

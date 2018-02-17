@@ -4,6 +4,8 @@ using System.IO;
 using System.Security.Permissions;
 using System.Threading;
 
+// This file needs a clean up
+
 namespace Watcher
 {
     class Watcher {
@@ -53,6 +55,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -121,6 +127,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -157,6 +167,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -194,6 +208,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -212,6 +230,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -261,6 +283,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -278,6 +304,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener2);
                 void UploadListener2(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -312,6 +342,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener);
                 void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
@@ -329,6 +363,10 @@ namespace Watcher
                 Handler.MessageHandler.AppListener(UploadListener2);
                 void UploadListener2(object sender, WebSocketSharp.MessageEventArgs ee)
                 {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
                     if (ee.Data == "True")
                     {
                         Console.WriteLine("Complete");
