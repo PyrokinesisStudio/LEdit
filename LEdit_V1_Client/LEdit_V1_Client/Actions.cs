@@ -11,10 +11,12 @@ namespace Watcher
         public static void ConfigureWatch()
         {
             string dir = Misc.Config.fullProjectPath;
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = dir;
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
-               | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            FileSystemWatcher watcher = new FileSystemWatcher
+            {
+                Path = dir,
+                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+               | NotifyFilters.FileName | NotifyFilters.DirectoryName
+            };
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.Created += new FileSystemEventHandler(OnCreated);
             watcher.Deleted += new FileSystemEventHandler(OnDeleted);
@@ -111,7 +113,9 @@ namespace Watcher
                 if (data == "" || data == null)
                 {
                     data = "// This file is empty";
+                    FileMgmt.Manager.UpdateFile(Misc.Config.fullProjectPath + "\\" + path, data);
                 }
+                ignore.Add(Misc.Config.fullProjectPath + "\\" + path);
                 string bytes = Other.MiscFunctions.StringCompressBytes(data);
                 Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {path} {bytes}");
                 Handler.MessageHandler.AppListener(UploadListener);

@@ -24,7 +24,7 @@ namespace L
                 case "CreateFile":
                     string fileToCreate = Misc.Config.fullProjectPath + @"\" + dataParams[2];
                     string bys = e.Data.Substring(e.Data.IndexOf(dataParams[3]));
-                    if (FileMgmt.Manager.FileExists(fileToCreate) || Misc.Userdata.Username == dataParams[1])
+                    if (!FileMgmt.Manager.FileExists(fileToCreate) || Misc.Userdata.Username != dataParams[1])
                     {
                         Watcher.Watcher.ignore.Add(fileToCreate);
                         string str = Other.MiscFunctions.StringDecompressBytes(bys);
