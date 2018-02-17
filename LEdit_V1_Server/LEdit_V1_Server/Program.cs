@@ -36,7 +36,7 @@ namespace LEdit_V1_Server
                     Send(ActionRunner.RunFolderIndexSender(dataParams));
                     break;
                 case "RequestFileData":
-                    Send(ActionRunner.RunFileDataSender(dataParams));
+                    Send(Other.MiscFunctions.StringCompressBytes(ActionRunner.RunFileDataSender(dataParams)));
                     break;
                 case "UploadFileData":
                     string bytes = e.Data.Substring(e.Data.IndexOf(dataParams[4]));

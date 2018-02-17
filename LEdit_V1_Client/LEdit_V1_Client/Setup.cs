@@ -125,7 +125,7 @@ namespace Setup
             {
                 string progress = DataRanThrough + "/" + DataToRunThrough;
                 Console.WriteLine($"Loading (x/y): {progress}");
-                files[DataRanThrough, 1] = e.Data;
+                files[DataRanThrough, 1] = Other.MiscFunctions.StringDecompressBytes(e.Data);
                 DataRanThrough++;
                 if (DataRanThrough != DataToRunThrough)
                     Misc.Global.connectionSocket.Send($"RequestFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {files[DataRanThrough, 0]}");
