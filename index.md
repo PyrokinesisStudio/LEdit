@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-# [](#header-1)LEdit
+# [](#header-1)LEdit - this page is out of date, view our github repo and view readme.md
 
 # [](#header-2)Information
 **Version Information**: VA 1.1 [Version Alpha 1.1] | P2 [Phase 2] <br>
