@@ -69,6 +69,7 @@ namespace Handler
 
         public static void ClientActions(String[] splitMsg)
         {
+            string Value = splitMsg[1];
             switch (splitMsg[0])
             {
                 case "Help":
@@ -84,48 +85,10 @@ namespace Handler
                     Console.WriteLine("To change a setting type: Change(setting) (value)");
                     break;
                 case "ChangeIP":
-                    string Value = splitMsg[1];
-                    try
-                    {
-                        var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                        config.AppSettings.Settings["ip"].Value = Value;
-                        config.Save(ConfigurationSaveMode.Modified);
-                        ConfigurationManager.RefreshSection("ip");
-                        Console.WriteLine("Restart for changes to take effect");
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Run LEdit in administrator  mode to change this setting");
-                    }
-                    ConfigurationManager.RefreshSection("appSettings");
                     break;
                 case "ChangePORT":
-                    string Value1 = splitMsg[1];
-                    try
-                    {
-                        var config1 = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                        config1.AppSettings.Settings["port"].Value = Value1;
-                        config1.Save(ConfigurationSaveMode.Modified);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("Run LEdit in administrator  mode to change this setting");
-                    }
-                    ConfigurationManager.RefreshSection("appSettings");
                     break;
                 case "ChangeFOLDER":
-                    string Value2 = splitMsg[1];
-                    try
-                    {
-                        var config2 = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                        config2.AppSettings.Settings["ProjectFolder"].Value = Value2;
-                        config2.Save(ConfigurationSaveMode.Modified);
-                    }
-                    catch
-                    {
-                        Console.WriteLine("Run LEdit in administrator  mode to change this setting");
-                    }
-                    ConfigurationManager.RefreshSection("appSettings");
                     break;
                 /*case "DEMO_COMMAND":
                     string path = "streetrp\\streetrp.txt";

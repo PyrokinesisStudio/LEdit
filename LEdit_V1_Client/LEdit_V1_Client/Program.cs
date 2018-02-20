@@ -4,6 +4,7 @@ using System.Threading;
 using System.Configuration;
 using System.Net;
 using SevenZip;
+using System.Text.RegularExpressions;
 
 namespace LEdit_V1_Client
 {
@@ -62,9 +63,15 @@ namespace Misc
 {
     public class Config
     {
-        public static IPAddress ip = IPAddress.Parse("176.31.102.221");
-        public static int port = 90;
-        public static string projectFolder = "sp";
+       
+        public static string Settings = FileMgmt.Manager.ReadFile("Settings.txt");
+        public static string[] SettingsS = Settings.Split(',');
+        static string ipaddrstring = SettingsS[0];
+        public static string  portstring = SettingsS[1];
+        static string projectfolder = SettingsS[2];
+        public static IPAddress ip = IPAddress.Parse(ipaddrstring.Substring(12));
+        public static int port = Convert.ToInt32(portstring.Substring(10)); 
+        public static string projectFolder = projectfolder.Substring(15);
         public static string fullProjectPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{projectFolder}";
     }
 
