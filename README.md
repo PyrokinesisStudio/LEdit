@@ -8,13 +8,13 @@ Version Information: VB 1.6.1 | S3</h3>
 
 LEdit will allow teams to live share their code with other members and edit it. How this will work is you will configure your team directory on the application, and then everything in that directory will be shared with your team members you setup accounts for.
 
-#### Why isn't this or that here already!?
+## FAQ
+
+**Why isn't this or that here already!?**
 
 Remember, this is a **Beta**. Currently things are still being built, like;
 
 * User account creator - BCrypt (.NET -> CryptSharp Library, or PHP)
-
-## FAQ
 
 **Why can't I just use FTP to collaborate with my team?**
 
