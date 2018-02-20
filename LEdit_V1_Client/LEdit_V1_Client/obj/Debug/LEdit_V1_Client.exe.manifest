@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="LEdit_V1_Client.exe" version="1.0.0.17" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="LEdit_V1_Client.exe" version="1.0.0.20" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <application />
   <entryPoint>
     <assemblyIdentity name="LEdit_V1_Client" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Client.exe" size="25056">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LEdit_V1_Client.exe" size="24544">
       <assemblyIdentity name="LEdit_V1_Client" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>MbcS9xxFWlwu5lw4lRVyJJh3f4Ysvtzx5RMJhAvn3Do=</dsig:DigestValue>
+        <dsig:DigestValue>2YWImJG7dwNzHKCbfZ6S4gEJBOBMvcOmjJUT6VfAOpU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -84,6 +84,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>4II3LXnwfJXnBTKz7X6kxdbW9isB4kyD+shFlrovUow=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Settings.txt" size="61">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>wdPqGbPVFzxmJNbd8G9oTZivYelX9oZmQ7nQFYJzNM0=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>
