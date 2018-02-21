@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Configuration;
-
+using System.IO;
 namespace Handler
 {
     class MessageHandler
@@ -69,7 +69,10 @@ namespace Handler
 
         public static void ClientActions(String[] splitMsg)
         {
-            string Value = splitMsg[1];
+            string docs = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\LEdit_Data\\settings.txt";
+            string Settings = FileMgmt.Manager.ReadFile(docs);
+            string[] SettingsS = Settings.Split(',');
+            string NewSettings;
             switch (splitMsg[0])
             {
                 case "Help":
@@ -85,10 +88,29 @@ namespace Handler
                     Console.WriteLine("To change a setting type: Change(setting) (value)");
                     break;
                 case "ChangeIP":
+                    string Value = splitMsg[1];
+                    
+                    SettingsS[0] = "IPAddress = " + Value + ",";
+                    SettingsS[1] = SettingsS[1] + ",";
+                    SettingsS[2] = SettingsS[2] + ",";
+                    NewSettings  = SettingsS[0] + SettingsS[1] + SettingsS[2];
+                    FileMgmt.Manager.UpdateFile(docs,NewSettings);
                     break;
                 case "ChangePORT":
+                    string Value1 = splitMsg[1];
+                    SettingsS[0] = SettingsS[0] + ",";
+                    SettingsS[1] = "Port = " + Value1 + ",";
+                    SettingsS[2] = SettingsS[2] + ",";
+                    NewSettings = SettingsS[0] + SettingsS[1] + SettingsS[2];
+                    FileMgmt.Manager.UpdateFile(docs, NewSettings);
                     break;
                 case "ChangeFOLDER":
+                    string Value2 = splitMsg[1];
+                    SettingsS[0] = SettingsS[0] + ",";
+                    SettingsS[1] = SettingsS[1] + ",";
+                    SettingsS[2] = "Folder = " + Value2 + ",";
+                    NewSettings = SettingsS[0] + SettingsS[1] + SettingsS[2];
+                    FileMgmt.Manager.UpdateFile(docs, NewSettings);
                     break;
                 /*case "DEMO_COMMAND":
                     string path = "streetrp\\streetrp.txt";

@@ -26,4 +26,3 @@ C:\Users\kael1\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\obj\Debug\
 C:\Users\kael1\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\obj\Debug\LEdit_V1_Client.application
 C:\Users\kael1\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\obj\Debug\LEdit_V1_Client.exe
 C:\Users\kael1\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\obj\Debug\LEdit_V1_Client.pdb
-C:\Users\kael1\Documents\GitHub\LEdit\LEdit_V1_Client\LEdit_V1_Client\bin\Debug\Settings.txt

@@ -1,3 +1,0 @@
-﻿IPAddress = 81.4.111.219, 
-Port = 90,
-ProjectFolder = sp
