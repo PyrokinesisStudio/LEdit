@@ -6,7 +6,7 @@ Version Information: VB 1.6.1 | S3</h3>
 
 ## What is this?
 
-LEdit is an app designed for teams to work off of a single shared server with any change syncing over to anyone with the application open. How this will work is you will configure your team directory on the application, and then everything in that directory will be shared with your team members you setup accounts for.
+LEdit is an app designed for teams to work off of a single shared server (with all changes syncing over to anyone with the application open - to prevent any conflicts in peoples work). How this will work is you will configure your team directory on the application, and then everything in that directory will be shared with your team members you setup accounts for.
 
 ## FAQ
 
