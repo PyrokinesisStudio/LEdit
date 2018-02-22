@@ -6,7 +6,7 @@ Version Information: VB 1.6.1 | S3</h3>
 
 ## What is this?
 
-LEdit will allow teams to live share their code with other members and edit it. How this will work is you will configure your team directory on the application, and then everything in that directory will be shared with your team members you setup accounts for.
+LEdit is an app designed for teams to work off of a single shared server with any change syncing over to anyone with the application open. How this will work is you will configure your team directory on the application, and then everything in that directory will be shared with your team members you setup accounts for.
 
 ## FAQ
 
@@ -74,3 +74,9 @@ To enable live changes, open your IDE settings and enable autosave.
 Now for the delay, we personally recommend a delay of <b>250ms</b> as that syncs roughly every word (According to our tests, however, it would be dependant on your typing) and should cause less sync delay. If you reduce the auto save delay beyond our limit it's very possible that it could increase the delay in reaching the server, which would increase the delay for your team to get changes which would be counter-productive.
 
 We are trying to speed everything up so people can reduce any delays.
+
+## Planned Features
+ - Time tracking
+ - File reverts
+ - GitHub integration so you can directly push from the app or even pull projects on to the app
+ - Voice/Text Conversations in built, so its easier to work on a file together
