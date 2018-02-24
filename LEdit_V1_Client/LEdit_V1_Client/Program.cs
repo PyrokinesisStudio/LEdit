@@ -129,7 +129,7 @@ namespace LEdit_V1_Client
 
             Misc.Config.ip = Misc.Global.ipaddrstring.Substring(12);
             Misc.Config.port = Convert.ToInt32(Misc.Global.portstring.Substring(7));
-            Misc.Config.projectFolder = Misc.Global.projectfolder.Substring(9);
+            Misc.Config.projectFolder = Misc.Global.projectfolder.Substring(10);
             Misc.Config.fullProjectPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\{Misc.Config.projectFolder}";
 
             SocketSetup();
