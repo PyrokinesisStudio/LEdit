@@ -1,6 +1,6 @@
 # LEdit (BETA)
 
-Version Information: VB 1.6.1 | S3</h3>
+Version Information: VB 1.7 | S4</h3>
 
 ---
 
