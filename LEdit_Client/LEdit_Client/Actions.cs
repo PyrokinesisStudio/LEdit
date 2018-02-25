@@ -1,0 +1,399 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Permissions;
+using System.Threading;
+
+// This file needs a clean up
+
+namespace Watcher
+{
+    class Watcher {
+        public static FileSystemWatcher watcher;
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+        public static void ConfigureWatch()
+        {
+            string dir = Misc.Config.fullProjectPath;
+            watcher = new FileSystemWatcher
+            {
+                Path = dir,
+                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite
+               | NotifyFilters.FileName | NotifyFilters.DirectoryName
+            };
+            watcher.Changed += new FileSystemEventHandler(OnChanged);
+            watcher.Created += new FileSystemEventHandler(OnCreated);
+            watcher.Deleted += new FileSystemEventHandler(OnDeleted);
+            watcher.Renamed += new RenamedEventHandler(OnRenamed);
+            watcher.IncludeSubdirectories = true;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        public static List<String> ignore = new List<String>();
+
+        // Define the event handlers
+        private static void OnChanged(object src, FileSystemEventArgs e)
+        {
+            for (int i = 0; i < ignore.Count; i++)
+            {
+                if (ignore[i] == e.FullPath)
+                {
+                    ignore.Remove(ignore[i]);
+                    return;
+                }
+            }
+            string path = e.FullPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+            if (path.Contains("."))
+            {
+                if (!path.Contains(".DS_Store") && !path.Contains(".sb"))
+                {
+                    // Continue
+                    string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path);
+                    if (data == "" || data == null)
+                    {
+                        data = "// This file is empty";
+                    }
+                    string bytes = Other.MiscFunctions.StringCompressBytes(data);
+                    Misc.Global.connectionSocket.Send($"UploadFileData {Misc.Userdata.Username} {Misc.Userdata.Password} {path.Replace('/', '\\')} {bytes}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
+                    {
+                        if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                        {
+                            return;
+                        }
+                        if (ee.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
+                    Console.WriteLine("File " + e.FullPath + " has been modified");
+                    ignore.Add(e.FullPath);
+                }
+            }
+        }
+ 
+        private static void OnCreated(object src, FileSystemEventArgs e)
+        {
+            for (int i = 0; i < ignore.Count; i++)
+            {
+                if (ignore[i] == e.FullPath)
+                {
+                    ignore.Remove(ignore[i]);
+                    return;
+                }
+            }
+
+            // Continue
+            string path = e.FullPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+
+            if (path.Contains("."))
+            {
+                if (!path.Contains(".DS_Store"))
+                {
+                    if (path.Contains(" "))
+                    {
+                        path = path.Replace(' ', '_');
+                        ignore.Add(e.FullPath);
+
+                        string uploadPath = Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path;
+                        string uploadPathHolder = uploadPath;
+                        string extension = Path.GetExtension(uploadPath);
+                        int num = 0;
+
+                        while (File.Exists(uploadPathHolder))
+                        {
+                            num++;
+                            uploadPathHolder = uploadPath.Substring(0, uploadPath.IndexOf(extension));
+                            uploadPathHolder = uploadPathHolder + "_[" + num + "]" + extension;
+                        }
+                        uploadPath = uploadPathHolder;
+                        ignore.Add(uploadPath);
+                        ignore.Add(e.FullPath);
+                        path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+                        FileMgmt.Manager.RenameFile(e.FullPath, Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path);
+                    }
+
+                    string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path);
+                    if (data == "" || data == null)
+                    {
+                        data = "// This file is empty";
+                        FileMgmt.Manager.UpdateFile(Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path, data);
+                    }
+                    ignore.Add(Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path);
+                    string bytes = Other.MiscFunctions.StringCompressBytes(data);
+                    Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {path.Replace('/', '\\')} {bytes}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
+                    {
+                        if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                        {
+                            return;
+                        }
+                        if (ee.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
+                }
+            }
+            else
+            {
+                if (path.Contains(" "))
+                {
+                    path = path.Replace(' ', '_');
+                    string uploadPath = Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path;
+                    string uploadPathHolder = uploadPath;
+                    int num = 0;
+                    while (Directory.Exists(uploadPathHolder))
+                    {
+                        num++;
+                        uploadPathHolder = uploadPath + "_[" + num + "]";
+                    }
+                    uploadPath = uploadPathHolder;
+                    ignore.Add(uploadPath);
+                    FileMgmt.Manager.RenameFolder(e.FullPath, uploadPath);
+                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+                }
+
+                Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {path.Replace('/', '\\')}");
+                Handler.MessageHandler.AppListener(UploadListener);
+                void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
+                {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
+                    if (ee.Data == "True")
+                    {
+                        Console.WriteLine("Complete");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    Handler.MessageHandler.CloseListener(UploadListener);
+                }
+            }
+            Console.WriteLine("File/Folder " + path + " has been created");
+        }
+
+        private static void OnDeleted(object src, FileSystemEventArgs e)
+        {
+            for (int i = 0; i < ignore.Count; i++)
+            {
+                if (ignore[i] == e.FullPath)
+                {
+                    ignore.Remove(ignore[i]);
+                    return;
+                }
+            }
+
+            // Continue
+
+            string path = e.FullPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+
+            if (path.Contains("."))
+            {
+                if (!path.Contains(".DS_Store") && !path.Contains(".sb"))
+                {
+                    Misc.Global.connectionSocket.Send($"DeleteFile {Misc.Userdata.Username} {Misc.Userdata.Password} {path.Replace('/', '\\')}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
+                    {
+                        if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                        {
+                            return;
+                        }
+                        if (ee.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
+                }
+            } else
+            {
+                Misc.Global.connectionSocket.Send($"DeleteFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {path.Replace('/', '\\')}");
+                Handler.MessageHandler.AppListener(UploadListener);
+                void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
+                {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
+                    if (ee.Data == "True")
+                    {
+                        Console.WriteLine("Complete");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    Handler.MessageHandler.CloseListener(UploadListener);
+                }
+            }
+            Console.WriteLine("File/Folder " + path + " has been deleted");
+        }
+
+        private static void OnRenamed(object src, RenamedEventArgs e)
+        {
+            for (int i = 0; i < ignore.Count; i++)
+            {
+                if (ignore[i] == e.FullPath)
+                {
+                    ignore.Remove(ignore[i]);
+                    return;
+                }
+            }
+            // Continue
+
+            string path = e.FullPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+            string oldPath = e.OldFullPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+
+            if (e.FullPath.Contains("."))
+            {
+                if (!path.Contains(".DS_Store"))
+                {
+                    if (path.Contains(" "))
+                    {
+                        path = path.Replace(' ', '_');
+                        ignore.Add(Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path);
+                        ignore.Add(e.FullPath);
+                        FileMgmt.Manager.RenameFile(e.FullPath, Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path);
+                    }
+                    string data = FileMgmt.Manager.ReadFile(Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path);
+                    if (data == "" || data == null)
+                    {
+                        data = "// This file is empty";
+                    }
+                    Misc.Global.connectionSocket.Send($"CreateNewFile {Misc.Userdata.Username} {Misc.Userdata.Password} {path.Replace('/', '\\')} {data}");
+                    Handler.MessageHandler.AppListener(UploadListener);
+                    void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
+                    {
+                        if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                        {
+                            return;
+                        }
+                        if (ee.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener);
+                    }
+                    /////////////////////////////////////////
+                    Misc.Global.connectionSocket.Send($"DeleteFile {Misc.Userdata.Username} {Misc.Userdata.Password} {oldPath.Replace('/', '\\')}");
+                    Handler.MessageHandler.AppListener(UploadListener2);
+                    void UploadListener2(object sender, WebSocketSharp.MessageEventArgs ee)
+                    {
+                        if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                        {
+                            return;
+                        }
+                        if (ee.Data == "True")
+                        {
+                            Console.WriteLine("Complete");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+                        Handler.MessageHandler.CloseListener(UploadListener2);
+                    }
+                }
+            } else
+            {
+                if (path.Contains(" "))
+                {
+                    path = path.Replace(' ', '_');
+                    string uploadPath = Misc.Config.fullProjectPath + Path.DirectorySeparatorChar + path;
+                    string uploadPathHolder = uploadPath;
+                    int num = 0;
+                    while (Directory.Exists(uploadPathHolder))
+                    {
+                        num++;
+                        uploadPathHolder = uploadPath + "_[" + num + "]";
+                    }
+                    uploadPath = uploadPathHolder;
+                    ignore.Add(uploadPath);
+                    FileMgmt.Manager.RenameFolder(e.FullPath, uploadPath);
+                    path = uploadPath.Substring(e.FullPath.IndexOf(Misc.Config.fullProjectPath) + Misc.Config.fullProjectPath.Length + 1);
+                }
+                Misc.Global.connectionSocket.Send($"CreateNewFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {path.Replace('/', '\\')}");
+                Handler.MessageHandler.AppListener(UploadListener);
+                void UploadListener(object sender, WebSocketSharp.MessageEventArgs ee)
+                {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
+                    if (ee.Data == "True")
+                    {
+                        Console.WriteLine("Complete");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    Handler.MessageHandler.CloseListener(UploadListener);
+                }
+
+                Misc.Global.connectionSocket.Send($"DeleteFolder {Misc.Userdata.Username} {Misc.Userdata.Password} {oldPath.Replace('/', '\\')}");
+                Handler.MessageHandler.AppListener(UploadListener2);
+                void UploadListener2(object sender, WebSocketSharp.MessageEventArgs ee)
+                {
+                    if (Other.MiscFunctions.LiveClientResponse(ee.Data))
+                    {
+                        return;
+                    }
+                    if (ee.Data == "True")
+                    {
+                        Console.WriteLine("Complete");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Failed (1) file transfer: " + ee.Data);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    }
+                    Handler.MessageHandler.CloseListener(UploadListener2);
+                }
+            }
+
+            Console.WriteLine("File/Folder {0} has been renamed to {1}", oldPath, path);
+        }
+    }
+}

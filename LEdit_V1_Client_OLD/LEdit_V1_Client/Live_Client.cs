@@ -15,7 +15,7 @@ namespace L
                     string bytes = e.Data.Substring(e.Data.IndexOf(dataParams[3]));
                     if (Misc.Userdata.Username != dataParams[2])
                     {
-                        Watcher.Watcher.ignore.Add(fileToModify);
+                        
                         string str = Other.MiscFunctions.StringDecompressBytes(bytes);
                         FileMgmt.Manager.UpdateFile(fileToModify, str);
                         Console.WriteLine("File Refresh");

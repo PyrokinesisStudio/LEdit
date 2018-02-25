@@ -19,7 +19,7 @@ namespace LEdit_V1_Server
 			switch (dataParams[0])
 			{
 				case "RunLogin":
-					Send(ActionRunner.RunLogin(dataParams, isUAC: false).ToString(), );
+					Send(ActionRunner.RunLogin(dataParams, isUAC: false).ToString());
 					break;
 				case "RequestFileIndex":
 					Send(ActionRunner.RunFileIndexSender(dataParams));
