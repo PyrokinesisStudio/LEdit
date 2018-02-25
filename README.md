@@ -8,7 +8,7 @@ Version Information: VB 1.6.1 | S3</h3>
 
 LEdit is an app designed for teams to work off of a single shared server (with all changes syncing over to anyone with the application open - to prevent any conflicts in peoples work). How this will work is you will configure your team directory on the application, and then everything in that directory will be shared with your team members you setup accounts for.
 
-## LEdit Versions V7 & Upwards (Excluding LEdit_V1_Client)
+## LEdit Versions V7 & Onwards (Excluding LEdit_V1_Client)
 
 We've made a **huge** change from using the normal .NET framework to the .NET Core framework, this was to allow us to have things cross-platform, but as it's now cross-platform, there is a lot more to manage with the features. V1.7s are early stages of a better LEdit, so please hang on with us as there will be issues - for example, the settings are **very** slow to respond, and don't fully work yet.
 
