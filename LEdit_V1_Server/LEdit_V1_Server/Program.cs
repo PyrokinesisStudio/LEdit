@@ -7,7 +7,7 @@ using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Server_Variables;
-
+// NEEDS TO BE CONVERTED TO .NET CORE
 namespace LEdit_V1_Server
 {
 	public class LE_Functions : WebSocketBehavior
