@@ -94,8 +94,7 @@ We are trying to speed everything up so people can reduce any delays.
   S4 -> Cross-platform release<br> 
   - S4A -> Client cross-platform release
   - S4B -> Server cross platform release<br>
-  S5 -> Near public release
-  
+    
  ## Points of release
   A -> ALPHA<br>
   B -> BETA<br>
