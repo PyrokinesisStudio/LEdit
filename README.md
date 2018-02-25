@@ -11,6 +11,7 @@ LEdit is an app designed for teams to work off of a single shared server (with a
 ## LEdit Versions V7 & Onwards (Excluding LEdit_V1_Client)
 
 We've made a **huge** change from using the normal .NET framework to the .NET Core framework, this was to allow us to have things cross-platform, but as it's now cross-platform, there is a lot more to manage with the features. V1.7s are early stages of a better LEdit, so please hang on with us as there will be issues - for example, the settings are **very** slow to respond, and don't fully work yet.
+If you are using Windows, **currently**, LEdit_V1_Client is the most stable to use, however, since this last push, we are **discontinuing** *LEdit_V1_Client*, to work solely on *LEdit_Client*, with all of our client updates going to *LEdit_Client* now.
 
 ## FAQ
 
