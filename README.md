@@ -88,15 +88,15 @@ We are trying to speed everything up so people can reduce any delays.
  
 # A run down of some of the terms we use with LEdit
  ## The Stages
-  S1 -> Initial release
-  S2 -> Stable release
-  S3 -> BETA release
-  S4 -> Cross-platform release 
+  S1 -> Initial release<br>
+  S2 -> Stable release<br>
+  S3 -> BETA release<br>
+  S4 -> Cross-platform release<br> 
   - S4A -> Client cross-platform release
-  - S4B -> Server cross platform release
+  - S4B -> Server cross platform release<br>
   S5 -> Near public release
   
  ## Points of release
-  A -> ALPHA
-  B -> BETA
+  A -> ALPHA<br>
+  B -> BETA<br>
   P -> PUBLIC (the final point)
