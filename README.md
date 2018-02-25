@@ -1,6 +1,6 @@
 # LEdit (BETA)
 
-Version Information: VB 1.7 | S4</h3>
+Version Information: VB 1.7 | S4A</h3>
 
 ---
 
@@ -85,3 +85,18 @@ We are trying to speed everything up so people can reduce any delays.
  - File reverts
  - GitHub integration so you can directly push from the app or even pull projects on to the app
  - Voice/Text Conversations in built, so its easier to work on a file together
+ 
+# A run down of some of the terms we use with LEdit
+ ## The Stages
+  S1 -> Initial release
+  S2 -> Stable release
+  S3 -> BETA release
+  S4 -> Cross-platform release 
+  - S4A -> Client cross-platform release
+  - S4B -> Server cross platform release
+  S5 -> Near public release
+  
+ ## Points of release
+  A -> ALPHA
+  B -> BETA
+  P -> PUBLIC (the final point)
