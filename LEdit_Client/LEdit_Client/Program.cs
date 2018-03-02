@@ -109,6 +109,7 @@ namespace LEdit_V1_Client
         static void Main(string[] args)
         {
             Console.Title = "LEdit";
+            // Creates the folder LEdit_Data and Settings.txt
             string docs = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + System.IO.Path.DirectorySeparatorChar + "Documents";
             if (!FileMgmt.Manager.DirExists(docs + System.IO.Path.DirectorySeparatorChar + "LEdit_Data"))
             {
@@ -116,11 +117,13 @@ namespace LEdit_V1_Client
             }
             if (!FileMgmt.Manager.FileExists(docs + System.IO.Path.DirectorySeparatorChar + "LEdit_Data" + System.IO.Path.DirectorySeparatorChar + "settings.txt"))
             {
-                // files are lowercases it looks nicer if they have a new line for each
+                // Writes the data to the settings file 
                 string data = "IPAddress = 81.4.111.219,\nPort = 90,\nFolder = sp,";
                 FileMgmt.Manager.CreateAndPopulateFile(docs + System.IO.Path.DirectorySeparatorChar + "LEdit_Data" + System.IO.Path.DirectorySeparatorChar + "settings.txt", data);
             }
 
+
+            // Gets settings
             Console.WriteLine(FileMgmt.Manager.ReadFile(docs + System.IO.Path.DirectorySeparatorChar + "LEdit_Data" + System.IO.Path.DirectorySeparatorChar + "settings.txt"));
 
             Misc.Global.settings = FileMgmt.Manager.ReadFile(System.IO.Path.Combine(docs, "LEdit_Data", "settings.txt"));
@@ -141,6 +144,7 @@ namespace LEdit_V1_Client
 
         public static void SocketSetup()
         {
+            // Connects to server
             Misc.Global.connectionSocket = new WebSocket($"ws://{Misc.Config.ip}:{Misc.Config.port}/LE");
             Misc.Global.connectionSocket.Connect();
             //Misc.Global.connectionSocket.Compression = WebSocketSharp.CompressionMethod.Deflate;
