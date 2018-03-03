@@ -1,4 +1,5 @@
 <?php
+
 class MySQL {
     function GetUserData($request) {
         require "connect.php";
@@ -14,6 +15,15 @@ class MySQL {
                 $first = false;
             }
         }
+    }
+    function ChangeUserPassword($username, $newPassword) {
+        require "connect.php";
+        $password = password_hash($newPassword, PASSWORD_DEFAULT);
+        $q = $conn->prepare("UPDATE users SET password=:pass WHERE username=:username");
+        $q->bindParam(":pass", $password);
+        $q->bindParam(":username", $username);
+        $q->execute();
+        echo "True";
     }
     function GetIndex($type) {
         require "connect.php";

@@ -17,6 +17,12 @@ switch ($action) {
 	case "NONE":
 		echo "False";
 		break;
+	case "ChangePassword":
+		require_once "lib/mysql.php";
+		$ms = new MySQL;
+		$ms->ChangeUserPassword(strtoupper($_GET['username']), $_GET['newPass']);
+		//echo "True";
+		break;
 	case "RequestUserData":
 		require_once "lib/mysql.php";
 		$ms = new MySQL;
@@ -31,11 +37,6 @@ switch ($action) {
 		require_once "lib/mysql.php";
 		$ms = new MySQL;
 		$ms->GetFileData($_GET['file']);
-		break;
-	case "CheckRank":
-		require_once "lib/mysql.php";
-		$ms = new MySQL;
-		$ms->CheckRank($_GET['user']);
 		break;
 	////////////////////////////////////////
 	case "UploadFileData":

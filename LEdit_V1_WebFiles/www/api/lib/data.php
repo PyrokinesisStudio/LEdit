@@ -8,8 +8,6 @@ class Data
         $oldPath = preg_replace("/\\\\/", "/", $path);
         $path = $project_folder . $oldPath;
         rrmdir($path);
-        rrmdir($gmod_path . $oldPath);
-
     }
 
     public function DeleteFile($path)
@@ -21,9 +19,6 @@ class Data
 
         } else {
             echo "unlink error for stage 1 delete file";
-        }
-        if (!unlink($gmod_path . $oldPath)) {
-            echo "unlink error for stage 2 delete file";
         }
     }
 
@@ -37,8 +32,6 @@ class Data
         $file = fopen($path, 'w') or die('Failed to open file - CREATE:  ' . $path);
         fwrite($file, $fData);
         fclose($file);
-        $d->CopyFile($path, $gmod_path . $oldPath);
-
     }
 
     public function CreateFolder($folder)
@@ -49,7 +42,6 @@ class Data
         $folder = $project_folder . $oldFolder;
 
         mkdir($folder, 0777);
-        $d->CopyFolder($gmod_path . $oldFolder);
     }
 
     //////////////////////////////////////
