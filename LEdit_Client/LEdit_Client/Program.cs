@@ -150,7 +150,7 @@ namespace LEdit_V1_Client
             {
                 string msg = Console.ReadLine();
 
-                String[] splitMsg = msg.Split(Convert.ToChar(" "));
+                String[] splitMsg = msg.Split(' ');
 
                 Console.WriteLine("Loading...");
 
@@ -162,10 +162,6 @@ namespace LEdit_V1_Client
                         Misc.Global.connectionSocket.Send(msg); // Send Message to Server
                         Handler.MessageHandler.UserListener(splitMsg); // Listen for Reply
                     }
-                }
-                else if (splitMsg[0] == "Help" || splitMsg[0] == "Settings")
-                {
-                    Handler.MessageHandler.ClientActions(splitMsg);
                 }
                 else if (splitMsg[0] == "Reconnect")
                 {

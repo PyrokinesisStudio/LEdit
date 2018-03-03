@@ -67,14 +67,38 @@ namespace Handler
             }
         }
 
+        public static void ChangePassword_Listener(object sender, WebSocketSharp.MessageEventArgs e)
+        {
+            if (e.Data == "True")
+            {
+                Misc.Userdata.Password = newPass;
+                Console.Clear();
+                Console.WriteLine("Successfully Changed!");
+            } else
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("An error occured!");
+                Console.WriteLine(e.Data);
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+        }
+
+        static string newPass;
+
         public static void ClientActions(String[] splitMsg)
         {
-            string docs = $"{Misc.Config.fullProjectPath}{Path.DirectorySeparatorChar}LEdit_Data{Path.DirectorySeparatorChar}settings.txt";
-            string Settings = FileMgmt.Manager.ReadFile(docs);
+            string docs = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + System.IO.Path.DirectorySeparatorChar + "Documents";
+            string Settings = FileMgmt.Manager.ReadFile(System.IO.Path.Combine(docs, "LEdit_Data", "settings.txt"));
             string[] SettingsS = Settings.Split(',');
             string NewSettings;
             switch (splitMsg[0])
             {
+                case "ChangePassword":
+                    newPass = splitMsg[1];
+                    Misc.Global.connectionSocket.Send($"ChangePassword {Misc.Userdata.Username} {Misc.Userdata.Password} {newPass}");
+                    AppListener(ChangePassword_Listener);
+                    break;
                 case "Help":
                     Console.WriteLine("Commands: ");
                     Console.WriteLine("Reconnect");
