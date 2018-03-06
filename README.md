@@ -17,9 +17,7 @@ If you are using Windows, **currently**, LEdit_V1_Client is the most stable to u
 
 **Why isn't this or that here already!?**
 
-Remember, this is a **Beta**. Currently things are still being built, like;
-
-* User account creator - BCrypt (.NET -> CryptSharp Library, or PHP)
+Remember, this is a **Beta**. Currently things are still being built
 
 **Why can't I just use FTP to collaborate with my team?**
 
@@ -67,10 +65,12 @@ Note: In the future this will be an easier process, currently you'll need to man
 3. Create your user accounts **(not currently possible)**
   * A tool to create those will be coming very soon
 
-4. Import the setup.sql file into your database
+4. Import the db.sql (sql/db.sql) file into your database
 
 5. Upload the web server files to your web server and configure your database and directory information
   * The web server should **ONLY** allow connections from the server's IP address, if it isn't then you **WILL** be **MASSIVELY** vulnerable.
+  
+6. Use the user account creator (www/registration/reg.php) to register any developers that you'd like to have access onto the app
 
 #### Adding Live Changes
 
