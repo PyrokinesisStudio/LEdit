@@ -62,18 +62,19 @@ Note: In the future this will be an easier process, currently you'll need to man
   * Configure everything in the Settings Namespace to how you would like it
   * Be sure to add in your server IP
 
-2. Configure the client application to how you would like it
-  * Be sure to remember to add in your server IP 
+2. Get your developers to download the client application
 
-3. Create your user accounts **(not currently possible)**
-  * A tool to create those will be coming very soon
+3. Use the user account creator (www/registration/reg.php) to register any developers that you'd like to have access onto the app
 
 4. Import the db.sql (sql/db.sql) file into your database
 
 5. Upload the web server files to your web server and configure your database and directory information
   * The web server should **ONLY** allow connections from the server's IP address, if it isn't then you **WILL** be **MASSIVELY** vulnerable.
   
-6. Use the user account creator (www/registration/reg.php) to register any developers that you'd like to have access onto the app
+ ## Setting up the client application
+ 1. Open it
+ 2. Type in Settings (yes with the capital S)
+ 3. Configure the settings to your needs :)
 
 #### Adding Live Changes
 
