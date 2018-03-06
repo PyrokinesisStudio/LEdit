@@ -1,6 +1,9 @@
 # LEdit (BETA)
 
-Version Information: VB 1.7 | S4A</h3>
+Version Information: VB 1.7 | S4A
+Ready to be used!
+(you need to compile the server itself)
+</h3>
 
 ---
 
@@ -81,10 +84,7 @@ Now for the delay, we personally recommend a delay of <b>250ms</b> as that syncs
 We are trying to speed everything up so people can reduce any delays.
 
 ## Planned Features
- - Time tracking
- - File reverts
- - GitHub integration so you can directly push from the app or even pull projects on to the app
- - Voice/Text Conversations in built, so its easier to work on a file together
+ https://github.com/Shift-Development/LEdit/projects/1
  
 # A run down of some of the terms we use with LEdit
  ## The Stages
