@@ -7,6 +7,11 @@ Ready to be used!
 
 ---
 
+## Updates
+
+Please wait a around a week to see new features and things being added to LEdit, this is because we recently sorted out our Software Team, and now are briefing them. In addition, Shift is undergoing some drastic changes to our documents and to the way things work, so pease bear with us.
+The current version works :)
+
 ## What is this?
 
 LEdit is an app designed for teams to work off of a single shared server (with all changes syncing over to anyone with the application open - to prevent any conflicts in peoples work). How this will work is you will configure your team directory on the application, and then everything in that directory will be shared with your team members you setup accounts for.
